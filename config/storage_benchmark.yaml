@@ -1,0 +1,43 @@
+project:
+  seed: 42
+
+corpus:
+  rows_per_category: 250000
+  chunk_rows: 50000
+  categories:
+    - name: All_Beauty
+      reviews_file: All_Beauty.jsonl.gz
+    - name: Video_Games
+      reviews_file: Video_Games.jsonl.gz
+  canonical_fields:
+    - rating
+    - text
+    - title
+    - timestamp
+    - verified_purchase
+    - helpful_vote
+    - asin
+    - parent_asin
+  accepted_field_aliases:
+    sort_timestamp: timestamp
+    helpful_votes: helpful_vote
+
+benchmark:
+  projected_columns:
+    - rating
+    - text
+    - parent_asin
+    - verified_purchase
+  predicate:
+    column: source_category
+    operator: "=="
+    value: All_Beauty
+  parquet_codecs:
+    - snappy
+    - zstd
+  parquet_row_group_sizes:
+    - 65536
+    - 262144
+  json_gzip_compresslevel: 6
+  warmup_runs: 1
+  measured_runs: 5

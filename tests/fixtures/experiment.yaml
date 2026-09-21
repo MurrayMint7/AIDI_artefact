@@ -1,0 +1,84 @@
+project:
+  seed: 42
+
+execution:
+  preparation_mode: out_of_core
+  review_chunk_rows: 2
+  duckdb_memory_limit: 256MB
+  duckdb_threads: 1
+
+data:
+  categories:
+    - name: All_Beauty
+      reviews_file: All_Beauty.jsonl.gz
+      metadata_file: meta_All_Beauty.jsonl.gz
+    - name: Video_Games
+      reviews_file: Video_Games.jsonl.gz
+      metadata_file: meta_Video_Games.jsonl.gz
+  canonical_review_fields:
+    - rating
+    - text
+    - title
+    - timestamp
+    - verified_purchase
+    - helpful_vote
+    - asin
+    - parent_asin
+  accepted_field_aliases:
+    sort_timestamp: timestamp
+    helpful_votes: helpful_vote
+  retained_metadata_fields:
+    - parent_asin
+    - main_category
+    - price
+    - rating_number
+  prohibited_curated_fields:
+    - user_id
+    - images
+    - videos
+    - store
+    - author
+    - bought_together
+    - description
+    - features
+    - details
+  labels:
+    negative:
+      id: 0
+      ratings: [1, 2]
+    neutral:
+      id: 1
+      ratings: [3]
+    positive:
+      id: 2
+      ratings: [4, 5]
+  deduplication:
+    key: normalised_text_sha256
+    normalisation:
+      - unicode_nfkc
+      - collapse_whitespace
+      - strip
+    discard_conflicting_labels: true
+
+split:
+  strategy: chronological
+  preferred:
+    train_end: "2021-12-31T23:59:59Z"
+    validation_start: "2022-01-01T00:00:00Z"
+    validation_end: "2022-12-31T23:59:59Z"
+    test_start: "2023-01-01T00:00:00Z"
+  minimum_rows_per_category_class:
+    validation: 0
+    test: 0
+  validation_subsets:
+    model_selection: earlier_half
+    policy_calibration: later_half
+  caps:
+    training_total: 100
+    validation_total: 100
+    test_total: 100
+  balance_training_across_category_class_cells: false
+  preserve_natural_validation_test_prevalence: true
+
+benchmark:
+  output_codec: snappy

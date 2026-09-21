@@ -1,0 +1,23 @@
+{
+  "dataset_sha256": "5eb0c1a746cafbdd59d790e9416d8053d1eb2d7606efae17d60ff11725aa516d",
+  "model": {
+    "model_id": "distilbert/distilbert-base-uncased",
+    "revision": "12040accade4e8a0f71eabdb258fecc2e7e948be"
+  },
+  "schema_version": 1,
+  "source_config_sha256": "41e19693ce069fadd47dcfca043049d9510bb82a25dcb753eb880f4d664f0c06",
+  "token_length_pilot": {
+    "batch_rows": 512,
+    "included_splits": [
+      "train",
+      "validation_model_selection"
+    ],
+    "max_length_candidates": [
+      128,
+      256
+    ],
+    "minimum_token_coverage": 0.9,
+    "recommended_max_length": 256,
+    "status": "provisional_pending_colab_throughput_pilot"
+  }
+}

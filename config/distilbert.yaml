@@ -1,0 +1,35 @@
+model:
+  model_id: distilbert/distilbert-base-uncased
+  revision: 12040accade4e8a0f71eabdb258fecc2e7e948be
+  revision_resolved_at: "2026-09-21"
+  revision_source: official_hugging_face_model_api
+  num_labels: 3
+
+token_length_pilot:
+  included_splits:
+    - train
+    - validation_model_selection
+  max_length_candidates:
+    - 128
+    - 256
+  minimum_token_coverage: 0.90
+  batch_rows: 512
+
+throughput_pilot:
+  sample_rows: 512
+  per_device_batch_size_candidates:
+    - 8
+    - 16
+  effective_batch_size: 32
+  warmup_steps: 2
+  measured_steps: 10
+  maximum_projected_training_hours: 8.0
+
+training:
+  epochs: 2
+  learning_rate: 0.00002
+  weight_decay: 0.01
+  dynamic_padding: true
+  seed: 42
+  selection_metric: macro_f1
+  checkpoint_frequency: each_epoch

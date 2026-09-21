@@ -1,0 +1,55 @@
+{
+  "elapsed_seconds": 2.585307,
+  "environment": {
+    "pandas": "2.3.3",
+    "pyarrow": "24.0.0",
+    "python": "3.10.12",
+    "tokenizers": "0.23.2",
+    "transformers": "5.17.0"
+  },
+  "evidence": {
+    "config_sha256": "41e19693ce069fadd47dcfca043049d9510bb82a25dcb753eb880f4d664f0c06",
+    "dataset_sha256": "5eb0c1a746cafbdd59d790e9416d8053d1eb2d7606efae17d60ff11725aa516d",
+    "slices_sha256": "6bc1f393bb0cf7eb0550ba47cc90ddd72f1e73e1b5f34bbbe914ca793a64f6f0"
+  },
+  "included_splits": [
+    "train",
+    "validation_model_selection"
+  ],
+  "max_length_candidates": [
+    128,
+    256
+  ],
+  "minimum_token_coverage": 0.9,
+  "model_id": "distilbert/distilbert-base-uncased",
+  "model_revision": "12040accade4e8a0f71eabdb258fecc2e7e948be",
+  "overall": {
+    "coverage": {
+      "128": 0.87197,
+      "256": 0.951697
+    },
+    "max": 7145,
+    "mean": 73.0202,
+    "p50": 37.0,
+    "p90": 156.0,
+    "p95": 250.0,
+    "p99": 621.0099999999984,
+    "rows": 33000,
+    "slice_type": "overall",
+    "slice_value": "all"
+  },
+  "policy_calibration_evaluated": false,
+  "recommendation_status": "provisional_pending_colab_throughput_pilot",
+  "recommended_max_length": 256,
+  "rows": 33000,
+  "rows_by_split": {
+    "train": 30000,
+    "validation_model_selection": 3000
+  },
+  "schema_version": 1,
+  "stage": "token_length_pilot",
+  "test_evaluated": false,
+  "tokenizer_class": "BertTokenizer",
+  "tokenizer_model_max_length": 512,
+  "tokenizer_name_or_path": "distilbert/distilbert-base-uncased"
+}

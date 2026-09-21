@@ -1,0 +1,66 @@
+{
+  "config_file": "storage_benchmark.yaml",
+  "config_sha256": "c2e00da3b2632023452573749d223167c3ca6d0df799cb6db4b3fff8ef8fd7ae",
+  "corpus_manifest_sha256": "3073fde91d38b6936f8d168413ca55d535dc6cbb10c99e3e1decb2f4bd190b02",
+  "hardware": {
+    "logical_cpu_count": 16,
+    "memory_bytes": 14476832768,
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "processor": "x86_64"
+  },
+  "logical_rows": 500000,
+  "methodology": {
+    "cache_policy": "One warm-up precedes measured repetitions; operating-system caches are not manually cleared, so results describe repeated local reads",
+    "corpus_ordering": "Category blocks follow declared source order; source row order is preserved within each category",
+    "equivalent_logical_rows_across_formats": true,
+    "measured_runs": 5,
+    "predicate_caveat": "Category predicate results benefit from this clustered layout; a differently ordered production file may achieve less row-group pruning",
+    "statistic": "median_with_min_max_and_range",
+    "transformation_time_excluded_from_read_time": true,
+    "warmup_runs": 1
+  },
+  "results_file": "storage_benchmark.csv",
+  "software": {
+    "pandas": "2.3.3",
+    "pyarrow": "24.0.0",
+    "python": "3.10.12"
+  },
+  "transformations": {
+    "source_extraction_seconds": 9.039531047004857,
+    "variant_writes": [
+      {
+        "filename": "benchmark_corpus.jsonl.gz",
+        "format": "jsonl_gzip",
+        "seconds": 13.323392295002122
+      },
+      {
+        "codec": "snappy",
+        "filename": "benchmark_snappy_rg65536.parquet",
+        "format": "parquet",
+        "row_group_size": 65536,
+        "seconds": 0.8798694680008339
+      },
+      {
+        "codec": "snappy",
+        "filename": "benchmark_snappy_rg262144.parquet",
+        "format": "parquet",
+        "row_group_size": 262144,
+        "seconds": 0.8371399269963149
+      },
+      {
+        "codec": "zstd",
+        "filename": "benchmark_zstd_rg65536.parquet",
+        "format": "parquet",
+        "row_group_size": 65536,
+        "seconds": 1.0139333819970489
+      },
+      {
+        "codec": "zstd",
+        "filename": "benchmark_zstd_rg262144.parquet",
+        "format": "parquet",
+        "row_group_size": 262144,
+        "seconds": 0.8949172450011247
+      }
+    ]
+  }
+}

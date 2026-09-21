@@ -1,0 +1,212 @@
+project:
+  name: amazon-review-sentiment
+  seed: 42
+  submission_deadline: "2026-09-24"
+  internal_completion_target: "2026-09-23"
+  primary_user: e-commerce insights analyst
+  decision: triage reviews automatically or route them for human review
+
+execution:
+  preparation_mode: out_of_core
+  review_chunk_rows: 50000
+  duckdb_memory_limit: 2GB
+  duckdb_threads: 1
+
+data:
+  source_name: Amazon Reviews 2023
+  source_owner: McAuley Lab, UCSD
+  purpose: non-commercial academic artefact
+  terms_note: >-
+    Publicly accessible primarily for research. The maintainers do not assign
+    a licence to the underlying Amazon content; do not describe it as open data.
+  categories:
+    - name: All_Beauty
+      reviews_url: https://mcauleylab.ucsd.edu/public_datasets/data/amazon_2023/raw/review_categories/All_Beauty.jsonl.gz
+      metadata_url: https://mcauleylab.ucsd.edu/public_datasets/data/amazon_2023/raw/meta_categories/meta_All_Beauty.jsonl.gz
+      expected_review_rows: 701528
+      expected_metadata_rows: 112590
+    - name: Video_Games
+      reviews_url: https://mcauleylab.ucsd.edu/public_datasets/data/amazon_2023/raw/review_categories/Video_Games.jsonl.gz
+      metadata_url: https://mcauleylab.ucsd.edu/public_datasets/data/amazon_2023/raw/meta_categories/meta_Video_Games.jsonl.gz
+      expected_review_rows: 4624615
+      expected_metadata_rows: 137269
+  canonical_review_fields:
+    - rating
+    - text
+    - title
+    - timestamp
+    - verified_purchase
+    - helpful_vote
+    - asin
+    - parent_asin
+  accepted_field_aliases:
+    sort_timestamp: timestamp
+    helpful_votes: helpful_vote
+  retained_metadata_fields:
+    - parent_asin
+    - main_category
+    - price
+    - rating_number
+  prohibited_curated_fields:
+    - user_id
+    - images
+    - videos
+    - store
+    - author
+    - bought_together
+    - description
+    - features
+    - details
+  join:
+    production_key: parent_asin
+    production_type: many_to_one_left
+    diagnostic_wrong_key: asin
+  labels:
+    negative:
+      id: 0
+      ratings: [1, 2]
+    neutral:
+      id: 1
+      ratings: [3]
+    positive:
+      id: 2
+      ratings: [4, 5]
+  primary_text_field: text
+  include_title_in_primary_model: false
+  title_ablation_priority: optional
+  deduplication:
+    key: normalised_text_sha256
+    normalisation:
+      - unicode_nfkc
+      - collapse_whitespace
+      - strip
+    discard_conflicting_labels: true
+
+split:
+  strategy: chronological
+  preferred:
+    train_end: "2021-12-31T23:59:59Z"
+    validation_start: "2022-01-01T00:00:00Z"
+    validation_end: "2022-12-31T23:59:59Z"
+    test_start: "2023-01-01T00:00:00Z"
+  minimum_rows_per_category_class:
+    validation: 500
+    test: 500
+  fallback: per_category_chronological_80_10_10
+  validation_subsets:
+    model_selection: earlier_half
+    policy_calibration: later_half
+  caps:
+    training_total: 30000
+    validation_total: 6000
+    test_total: 12000
+  balance_training_across_category_class_cells: true
+  preserve_natural_validation_test_prevalence: true
+
+benchmark:
+  input_format: jsonl_gzip
+  output_format: parquet
+  selected_output:
+    codec: zstd
+    row_group_size: 65536
+    decision_artifact: artifacts/metrics/storage_benchmark_decision.json
+  codecs:
+    - snappy
+    - zstd
+  row_group_sizes:
+    - 65536
+    - 262144
+  projected_columns:
+    - rating
+    - text
+    - parent_asin
+    - verified_purchase
+  warmup_runs: 1
+  measured_runs: 5
+  statistic: median_and_range
+
+models:
+  majority:
+    prevalence_source: full_pre_balance_training_population
+  tfidf_logistic_regression:
+    word_ngram_range: [1, 2]
+    min_df_candidates: [2, 5]
+    max_features_candidates: [50000, 100000]
+    c_candidates: [0.5, 1.0, 2.0]
+    max_iter: 1000
+    tune_on: model_selection
+    calibration: sigmoid
+  distilbert:
+    model_id: distilbert/distilbert-base-uncased
+    revision: null
+    revision_policy: pin_immutable_commit_at_first_download
+    num_labels: 3
+    epochs: 2
+    learning_rate: 0.00002
+    weight_decay: 0.01
+    effective_batch_size: 32
+    max_length_candidates: [128, 256]
+    minimum_token_coverage: 0.90
+    dynamic_padding: true
+    selection_metric: macro_f1
+    checkpoint_frequency: each_epoch
+
+evaluation:
+  primary_metric: macro_f1
+  secondary_metrics:
+    - accuracy
+    - weighted_f1
+    - per_class_precision_recall_f1
+    - multiclass_brier_score
+    - expected_calibration_error
+    - batch_one_latency_median_p95
+  bootstrap_resamples: 1000
+  confidence_interval: 0.95
+  distilbert_calibration: temperature_scaling
+  tfidf_calibration: sigmoid
+  selective_accuracy_target: 0.90
+  threshold_selection_subset: policy_calibration
+  minimum_slice_rows: 200
+  required_slices:
+    - category
+    - test_period_half
+    - verified_purchase
+    - helpful_vote_zero_vs_positive
+    - token_length_quartile
+    - price_band_with_missing
+    - rating_number_band
+
+serving:
+  interface: gradio
+  default_model: distilbert
+  public_share: false
+  raw_text_logging: false
+  checkpoint_handoff: private_google_drive_to_local_ignored_models_directory
+
+governance:
+  repository_visibility: public
+  publish_row_level_data: false
+  publish_model_weights: false
+  raw_data_retention: delete_after_assessment_and_reproducibility_check
+  screenshots_must_exclude_identifiers: true
+  assessment_evidence:
+    - public_repository_link
+    - screenshots
+    - redacted_logs
+  lawful_basis_wording_prescribed: false
+
+scope:
+  required:
+    - data_pipeline
+    - storage_benchmark
+    - majority_baseline
+    - tfidf_logistic_regression
+    - distilbert_fine_tuning
+    - calibration_and_human_review_threshold
+    - robustness_and_performance_disparity_analysis
+    - accessible_local_gradio_interface
+    - model_card_and_runbook
+  optional_cut_first:
+    - title_ablation
+    - true_cross_domain_experiment
+    - second_transformer_run

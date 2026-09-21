@@ -1,0 +1,7 @@
+{"rating": 5.0, "title": "Great", "text": "  Great   product  ", "images": [], "asin": "A1", "parent_asin": "P1", "user_id": "USER-1", "timestamp": 1609459200000, "helpful_vote": 0, "verified_purchase": true}
+{"rating": 5.0, "title": "Still great", "text": "Great product", "images": [], "asin": "A1-B", "parent_asin": "P1", "user_id": "USER-2", "timestamp": 1609545600000, "helpful_vote": 1, "verified_purchase": true}
+{"rating": 3.0, "title": "Average", "text": "It works, but nothing special.", "images": [], "asin": "A2", "parent_asin": "P2", "user_id": "USER-3", "timestamp": 1646092800000, "helpful_vote": 2, "verified_purchase": false}
+{"rating": 1.0, "title": "Broken", "text": "Broke after one use.", "images": [], "asin": "A3", "parent_asin": "P-MISSING", "user_id": "USER-4", "timestamp": 1675209600000, "helpful_vote": 0, "verified_purchase": true}
+{"rating": 1.0, "title": "Mixed", "text": "Mixed duplicate", "images": [], "asin": "A4", "parent_asin": "P4", "user_id": "USER-5", "timestamp": 1590969600000, "helpful_vote": 0, "verified_purchase": true}
+{"rating": 5.0, "title": "Mixed", "text": "Mixed duplicate", "images": [], "asin": "A4", "parent_asin": "P4", "user_id": "USER-6", "timestamp": 1622505600000, "helpful_vote": 0, "verified_purchase": true}
+{"rating": 4.0, "title": "Empty", "text": "   ", "images": [], "asin": "A5", "parent_asin": "P5", "user_id": "USER-7", "timestamp": 1640995200000, "helpful_vote": 0, "verified_purchase": true}

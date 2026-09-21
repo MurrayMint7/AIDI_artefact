@@ -1,0 +1,46 @@
+{
+  "caveat": "This decision describes repeated local reads of the fixed benchmark corpus; it is not a universal codec ranking. The category predicate benefits from category-clustered rows and may show less pruning on another layout",
+  "comparison": {
+    "candidate_ranking": [
+      {
+        "codec": "zstd",
+        "file_bytes": 70281643,
+        "row_group_size": 65536,
+        "summed_scenario_medians_seconds": 1.2780065280021518
+      },
+      {
+        "codec": "snappy",
+        "file_bytes": 97971138,
+        "row_group_size": 65536,
+        "summed_scenario_medians_seconds": 1.3534936999931233
+      },
+      {
+        "codec": "zstd",
+        "file_bytes": 68812614,
+        "row_group_size": 262144,
+        "summed_scenario_medians_seconds": 1.5189098740011104
+      },
+      {
+        "codec": "snappy",
+        "file_bytes": 96024222,
+        "row_group_size": 262144,
+        "summed_scenario_medians_seconds": 1.7730364649978583
+      }
+    ],
+    "jsonl_gzip_file_bytes": 69909121,
+    "logical_rows": 500000
+  },
+  "selected": {
+    "codec": "zstd",
+    "file_bytes": 70281643,
+    "format": "parquet",
+    "row_group_size": 65536,
+    "size_change_vs_jsonl_gzip_percent": 0.5328660905348818,
+    "speedup_vs_jsonl_gzip": {
+      "category_predicate_projection": 33.995308352594414,
+      "four_column_projection": 14.63297893751367,
+      "full_schema": 8.376023609749993
+    }
+  },
+  "selection_rule": "Lowest sum of the three measured scenario medians; file bytes break ties"
+}

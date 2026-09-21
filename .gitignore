@@ -1,0 +1,56 @@
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.key
+credentials*.json
+token*.json
+
+# Source, interim, processed, and handoff datasets
+data/
+*.jsonl
+*.jsonl.gz
+*.parquet
+*.arrow
+*.gz
+!tests/fixtures/*.jsonl
+
+# Models and training checkpoints
+models/
+checkpoints/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.joblib
+*.pkl
+
+# Row-level predictions and operational logs
+artifacts/predictions/
+artifacts/logs/
+*.log
+
+# Local planning, research, and assessment working documents
+docs/
+
+# Notebook and editor state
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+.vscode/
+.idea/
+
+# Operating-system files
+.DS_Store
+Thumbs.db

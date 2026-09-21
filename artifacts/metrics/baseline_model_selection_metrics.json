@@ -1,0 +1,285 @@
+{
+  "config_sha256": "bc79941532f9cd01c073a5fc962c18a6111bd9b3ded741eae3100d750129887f",
+  "dataset_sha256": "5eb0c1a746cafbdd59d790e9416d8053d1eb2d7606efae17d60ff11725aa516d",
+  "evaluation_split": "validation_model_selection",
+  "label_order": [
+    {
+      "id": 0,
+      "label": "negative"
+    },
+    {
+      "id": 1,
+      "label": "neutral"
+    },
+    {
+      "id": 2,
+      "label": "positive"
+    }
+  ],
+  "runs": {
+    "majority": {
+      "metrics": {
+        "accuracy": 0.6536666666666666,
+        "confusion_matrix": {
+          "label_order": [
+            "negative",
+            "neutral",
+            "positive"
+          ],
+          "values": [
+            [
+              0,
+              0,
+              764
+            ],
+            [
+              0,
+              0,
+              275
+            ],
+            [
+              0,
+              0,
+              1961
+            ]
+          ]
+        },
+        "macro_f1": 0.26352213935362495,
+        "per_class": [
+          {
+            "f1": 0.0,
+            "id": 0,
+            "label": "negative",
+            "precision": 0.0,
+            "recall": 0.0,
+            "support": 764
+          },
+          {
+            "f1": 0.0,
+            "id": 1,
+            "label": "neutral",
+            "precision": 0.0,
+            "recall": 0.0,
+            "support": 275
+          },
+          {
+            "f1": 0.7905664180608748,
+            "id": 2,
+            "label": "positive",
+            "precision": 0.6536666666666666,
+            "recall": 1.0,
+            "support": 1961
+          }
+        ],
+        "rows": 3000,
+        "weighted_f1": 0.5167669152724584
+      },
+      "model_bytes": 443,
+      "model_type": "majority_class",
+      "selected_label": "positive",
+      "training_class_counts": {
+        "negative": 798497,
+        "neutral": 328146,
+        "positive": 2944294
+      },
+      "training_population_rows": 4070937
+    },
+    "tfidf_logistic_regression": {
+      "candidates": [
+        {
+          "macro_f1": 0.6511129008256706,
+          "parameters": {
+            "C": 0.5,
+            "max_features": 50000,
+            "min_df": 2
+          },
+          "training_seconds": 15.230217658005131,
+          "vocabulary_features": 50000
+        },
+        {
+          "macro_f1": 0.6474682074349651,
+          "parameters": {
+            "C": 1.0,
+            "max_features": 50000,
+            "min_df": 2
+          },
+          "training_seconds": 15.472213105000264,
+          "vocabulary_features": 50000
+        },
+        {
+          "macro_f1": 0.6479913703152506,
+          "parameters": {
+            "C": 2.0,
+            "max_features": 50000,
+            "min_df": 2
+          },
+          "training_seconds": 15.364862902002642,
+          "vocabulary_features": 50000
+        },
+        {
+          "macro_f1": 0.6527729080082718,
+          "parameters": {
+            "C": 0.5,
+            "max_features": 100000,
+            "min_df": 2
+          },
+          "training_seconds": 10.04649926899583,
+          "vocabulary_features": 100000
+        },
+        {
+          "macro_f1": 0.6463754360816797,
+          "parameters": {
+            "C": 1.0,
+            "max_features": 100000,
+            "min_df": 2
+          },
+          "training_seconds": 19.015686388003814,
+          "vocabulary_features": 100000
+        },
+        {
+          "macro_f1": 0.6449010911998627,
+          "parameters": {
+            "C": 2.0,
+            "max_features": 100000,
+            "min_df": 2
+          },
+          "training_seconds": 20.502108421998855,
+          "vocabulary_features": 100000
+        },
+        {
+          "macro_f1": 0.6499058078841208,
+          "parameters": {
+            "C": 0.5,
+            "max_features": 50000,
+            "min_df": 5
+          },
+          "training_seconds": 13.40083943799982,
+          "vocabulary_features": 49850
+        },
+        {
+          "macro_f1": 0.6465282578698608,
+          "parameters": {
+            "C": 1.0,
+            "max_features": 50000,
+            "min_df": 5
+          },
+          "training_seconds": 14.014710729003127,
+          "vocabulary_features": 49850
+        },
+        {
+          "macro_f1": 0.6412212139971086,
+          "parameters": {
+            "C": 2.0,
+            "max_features": 50000,
+            "min_df": 5
+          },
+          "training_seconds": 14.904589174002467,
+          "vocabulary_features": 49850
+        },
+        {
+          "macro_f1": 0.6499058078841208,
+          "parameters": {
+            "C": 0.5,
+            "max_features": 100000,
+            "min_df": 5
+          },
+          "training_seconds": 13.458886611006164,
+          "vocabulary_features": 49850
+        },
+        {
+          "macro_f1": 0.6465282578698608,
+          "parameters": {
+            "C": 1.0,
+            "max_features": 100000,
+            "min_df": 5
+          },
+          "training_seconds": 14.821198424993781,
+          "vocabulary_features": 49850
+        },
+        {
+          "macro_f1": 0.6412212139971086,
+          "parameters": {
+            "C": 2.0,
+            "max_features": 100000,
+            "min_df": 5
+          },
+          "training_seconds": 14.265785351002705,
+          "vocabulary_features": 49850
+        }
+      ],
+      "metrics": {
+        "accuracy": 0.7486666666666667,
+        "confusion_matrix": {
+          "label_order": [
+            "negative",
+            "neutral",
+            "positive"
+          ],
+          "values": [
+            [
+              597,
+              142,
+              25
+            ],
+            [
+              85,
+              162,
+              28
+            ],
+            [
+              128,
+              346,
+              1487
+            ]
+          ]
+        },
+        "macro_f1": 0.6527729080082718,
+        "per_class": [
+          {
+            "f1": 0.758576874205845,
+            "id": 0,
+            "label": "negative",
+            "precision": 0.737037037037037,
+            "recall": 0.7814136125654451,
+            "support": 764
+          },
+          {
+            "f1": 0.35027027027027025,
+            "id": 1,
+            "label": "neutral",
+            "precision": 0.24923076923076923,
+            "recall": 0.5890909090909091,
+            "support": 275
+          },
+          {
+            "f1": 0.8494715795487003,
+            "id": 2,
+            "label": "positive",
+            "precision": 0.9655844155844155,
+            "recall": 0.7582865884752678,
+            "support": 1961
+          }
+        ],
+        "rows": 3000,
+        "weighted_f1": 0.7805636079041971
+      },
+      "model_bytes": 6370164,
+      "model_selection_rows": 3000,
+      "model_type": "tfidf_logistic_regression",
+      "probability_row_sum_max_error": 2.220446049250313e-16,
+      "selected_parameters": {
+        "C": 0.5,
+        "max_features": 100000,
+        "min_df": 2
+      },
+      "training_rows": 30000,
+      "training_seconds": 180.60982326399971
+    }
+  },
+  "schema_version": 1,
+  "selection_metric": "macro_f1",
+  "software": {
+    "scikit_learn": "1.7.2"
+  },
+  "test_evaluated": false
+}
