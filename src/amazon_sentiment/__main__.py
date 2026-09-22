@@ -12,7 +12,12 @@ from .acquisition import AcquisitionConfig, acquire
 from .baselines import BaselineConfig, train_baselines
 from .benchmark import BenchmarkConfig, benchmark
 from .data_pipeline import PipelineConfig, prepare
-from .evaluation import CalibrationConfig, calibrate_models
+from .evaluation import (
+    CalibrationConfig,
+    FinalEvaluationConfig,
+    calibrate_models,
+    evaluate_test,
+)
 from .transformer import (
     ThroughputConfig,
     TokenLengthConfig,
@@ -156,6 +161,39 @@ def main(argv: Sequence[str] | None = None) -> int:
         "--metrics-dir", type=Path, default=Path("artifacts/metrics")
     )
     calibration_parser.add_argument(
+        "--predictions-dir", type=Path, default=Path("artifacts/predictions")
+    )
+
+    test_parser = commands.add_parser(
+        "evaluate-test",
+        help="Run the one-time protected test evaluation with frozen policies",
+    )
+    _add_common_config(test_parser)
+    test_parser.add_argument(
+        "--dataset",
+        type=Path,
+        default=Path("data/generated/processed/training_dataset.parquet"),
+    )
+    test_parser.add_argument(
+        "--distilbert-run", type=Path, default=Path("models/distilbert-run")
+    )
+    test_parser.add_argument(
+        "--baseline-model-dir", type=Path, default=Path("models/baselines")
+    )
+    test_parser.add_argument(
+        "--calibration-summary",
+        type=Path,
+        default=Path("artifacts/metrics/policy_calibration_summary.json"),
+    )
+    test_parser.add_argument(
+        "--thresholds",
+        type=Path,
+        default=Path("artifacts/metrics/review_thresholds.json"),
+    )
+    test_parser.add_argument(
+        "--metrics-dir", type=Path, default=Path("artifacts/metrics")
+    )
+    test_parser.add_argument(
         "--predictions-dir", type=Path, default=Path("artifacts/predictions")
     )
 
@@ -307,6 +345,31 @@ def main(argv: Sequence[str] | None = None) -> int:
                     "summary": str(calibration_bundle.summary_path),
                     "thresholds": str(calibration_bundle.thresholds_path),
                     "predictions": str(calibration_bundle.predictions_path),
+                },
+                indent=2,
+            )
+        )
+        return 0
+
+    if arguments.command == "evaluate-test":
+        test_bundle = evaluate_test(
+            FinalEvaluationConfig.from_yaml(
+                arguments.config,
+                dataset_path=arguments.dataset,
+                distilbert_run_dir=arguments.distilbert_run,
+                baseline_model_dir=arguments.baseline_model_dir,
+                calibration_summary_path=arguments.calibration_summary,
+                thresholds_path=arguments.thresholds,
+                metrics_dir=arguments.metrics_dir,
+                predictions_dir=arguments.predictions_dir,
+            )
+        )
+        print(
+            json.dumps(
+                {
+                    "metrics": str(test_bundle.metrics_path),
+                    "predictions": str(test_bundle.predictions_path),
+                    "slice_metrics": str(test_bundle.slice_metrics_path),
                 },
                 indent=2,
             )

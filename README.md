@@ -109,6 +109,20 @@ temperature scaling for DistilBERT and sigmoid calibration for the frozen
 TF-IDF model, and locks the 90% selective-accuracy review thresholds. It does
 not read the protected test split.
 
+After the calibration evidence is reviewed and committed, the protected test
+evaluation is intentionally a one-shot command:
+
+```bash
+.venv/bin/python -m amazon_sentiment evaluate-test
+```
+
+It validates every frozen input hash, reads exactly the 12,000 `test` rows,
+applies the frozen calibrators and thresholds, and writes aggregate metrics,
+paired bootstrap intervals and declared slice metrics. If
+`artifacts/metrics/final_test_metrics.json` already exists, the command refuses
+to overwrite it. Row-level predictions remain under the ignored
+`artifacts/predictions/` directory.
+
 The workspace uses an isolated virtual environment with pinned runtime and
 development requirements. `pip check` should report no broken dependencies.
 
