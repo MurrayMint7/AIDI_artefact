@@ -10,12 +10,13 @@ weights. See `.gitignore` before adding generated files.
 
 ## Current status
 
-The governed dataset and both local baselines have been produced. The full
-preparation run reduced 5,326,143 source reviews to a frozen 48,000-row modelling
-dataset. The selected TF-IDF model was chosen only on the model-selection
-validation subset; the test subset remains untouched. The storage benchmark
-selected Zstandard Parquet with 65,536-row groups for the production handoff,
-so the data-foundation exit gate is complete.
+The governed dataset, local baselines, DistilBERT fine-tune, calibration and
+one-time protected test evaluation are complete. The full preparation run
+reduced 5,326,143 source reviews to a frozen 48,000-row modelling dataset.
+DistilBERT achieved test macro-F1 0.6844 compared with 0.6017 for TF-IDF, while
+the local CPU evidence records the corresponding latency and size trade-off.
+Aggregate metrics and report figures are public; source reviews, row-level
+predictions and model weights remain excluded.
 
 ## Data-pipeline interface
 
@@ -122,6 +123,21 @@ paired bootstrap intervals and declared slice metrics. If
 `artifacts/metrics/final_test_metrics.json` already exists, the command refuses
 to overwrite it. Row-level predictions remain under the ignored
 `artifacts/predictions/` directory.
+
+After that one-time result exists, build the local CPU efficiency benchmark,
+aggregate error-analysis evidence and report figures without reopening or
+overwriting the test metric:
+
+```bash
+.venv/bin/python -m amazon_sentiment evaluation-evidence
+```
+
+The batch-one benchmark protocol is versioned separately in
+`config/evaluation_evidence.yaml` so the frozen experiment configuration is not
+changed after testing. Aggregate JSON and SVG files are public. The deterministic
+error-coding worksheet contains review text and stays in the ignored
+`artifacts/predictions/` directory; its qualitative theme fields require author
+review before the report describes them as coded findings.
 
 The workspace uses an isolated virtual environment with pinned runtime and
 development requirements. `pip check` should report no broken dependencies.

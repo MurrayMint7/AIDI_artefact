@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="500" viewBox="0 0 980 500" role="img">
+<rect width="100%" height="100%" fill="white"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<text x="490.0" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#1a202c">Final-test confusion matrices, row-normalised by true class</text>
+<text x="280" y="92" text-anchor="middle" font-size="20" font-weight="700" fill="#1a202c">TF-IDF</text>
+<text x="190" y="125" text-anchor="middle" font-size="14" font-weight="400" fill="#1a202c">Negative</text>
+<text x="130" y="195" text-anchor="end" font-size="14" font-weight="400" fill="#1a202c">Negative</text>
+<text x="280" y="125" text-anchor="middle" font-size="14" font-weight="400" fill="#1a202c">Neutral</text>
+<text x="130" y="285" text-anchor="end" font-size="14" font-weight="400" fill="#1a202c">Neutral</text>
+<text x="370" y="125" text-anchor="middle" font-size="14" font-weight="400" fill="#1a202c">Positive</text>
+<text x="130" y="375" text-anchor="end" font-size="14" font-weight="400" fill="#1a202c">Positive</text>
+<rect x="145" y="145" width="90" height="90" fill="rgb(127,137,255)" stroke="#fff"/>
+<text x="190" y="188" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">75.8%</text>
+<text x="190" y="210" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">n=2062</text>
+<rect x="235" y="145" width="90" height="90" fill="rgb(242,252,255)" stroke="#fff"/>
+<text x="280" y="188" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">1.6%</text>
+<text x="280" y="210" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">n=44</text>
+<rect x="325" y="145" width="90" height="90" fill="rgb(209,219,255)" stroke="#fff"/>
+<text x="370" y="188" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">22.6%</text>
+<text x="370" y="210" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">n=616</text>
+<rect x="145" y="235" width="90" height="90" fill="rgb(194,204,255)" stroke="#fff"/>
+<text x="190" y="278" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">32.3%</text>
+<text x="190" y="300" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">n=301</text>
+<rect x="235" y="235" width="90" height="90" fill="rgb(232,242,255)" stroke="#fff"/>
+<text x="280" y="278" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">8.4%</text>
+<text x="280" y="300" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">n=78</text>
+<rect x="325" y="235" width="90" height="90" fill="rgb(152,162,255)" stroke="#fff"/>
+<text x="370" y="278" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">59.4%</text>
+<text x="370" y="300" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">n=554</text>
+<rect x="145" y="325" width="90" height="90" fill="rgb(238,248,255)" stroke="#fff"/>
+<text x="190" y="368" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">3.9%</text>
+<text x="190" y="390" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">n=326</text>
+<rect x="235" y="325" width="90" height="90" fill="rgb(243,253,255)" stroke="#fff"/>
+<text x="280" y="368" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">1.2%</text>
+<text x="280" y="390" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">n=103</text>
+<rect x="325" y="325" width="90" height="90" fill="rgb(97,107,255)" stroke="#fff"/>
+<text x="370" y="368" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">94.9%</text>
+<text x="370" y="390" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">n=7916</text>
+<text x="760" y="92" text-anchor="middle" font-size="20" font-weight="700" fill="#1a202c">DistilBERT</text>
+<text x="670" y="125" text-anchor="middle" font-size="14" font-weight="400" fill="#1a202c">Negative</text>
+<text x="610" y="195" text-anchor="end" font-size="14" font-weight="400" fill="#1a202c">Negative</text>
+<text x="760" y="125" text-anchor="middle" font-size="14" font-weight="400" fill="#1a202c">Neutral</text>
+<text x="610" y="285" text-anchor="end" font-size="14" font-weight="400" fill="#1a202c">Neutral</text>
+<text x="850" y="125" text-anchor="middle" font-size="14" font-weight="400" fill="#1a202c">Positive</text>
+<text x="610" y="375" text-anchor="end" font-size="14" font-weight="400" fill="#1a202c">Positive</text>
+<rect x="625" y="145" width="90" height="90" fill="rgb(122,132,255)" stroke="#fff"/>
+<text x="670" y="188" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">78.9%</text>
+<text x="670" y="210" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">n=2148</text>
+<rect x="715" y="145" width="90" height="90" fill="rgb(215,225,255)" stroke="#fff"/>
+<text x="760" y="188" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">19.0%</text>
+<text x="760" y="210" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">n=516</text>
+<rect x="805" y="145" width="90" height="90" fill="rgb(241,251,255)" stroke="#fff"/>
+<text x="850" y="188" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">2.1%</text>
+<text x="850" y="210" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">n=58</text>
+<rect x="625" y="235" width="90" height="90" fill="rgb(202,212,255)" stroke="#fff"/>
+<text x="670" y="278" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">27.5%</text>
+<text x="670" y="300" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">n=257</text>
+<rect x="715" y="235" width="90" height="90" fill="rgb(144,154,255)" stroke="#fff"/>
+<text x="760" y="278" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">64.8%</text>
+<text x="760" y="300" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">n=605</text>
+<rect x="805" y="235" width="90" height="90" fill="rgb(233,243,255)" stroke="#fff"/>
+<text x="850" y="278" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">7.6%</text>
+<text x="850" y="300" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">n=71</text>
+<rect x="625" y="325" width="90" height="90" fill="rgb(239,249,255)" stroke="#fff"/>
+<text x="670" y="368" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">3.3%</text>
+<text x="670" y="390" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">n=272</text>
+<rect x="715" y="325" width="90" height="90" fill="rgb(221,231,255)" stroke="#fff"/>
+<text x="760" y="368" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">15.0%</text>
+<text x="760" y="390" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">n=1255</text>
+<rect x="805" y="325" width="90" height="90" fill="rgb(118,128,255)" stroke="#fff"/>
+<text x="850" y="368" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">81.7%</text>
+<text x="850" y="390" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">n=6818</text>
+<text x="25" y="290" text-anchor="start" font-size="15" font-weight="700" fill="#1a202c" transform="rotate(-90 25 290)">True label</text>
+<text x="490.0" y="475" text-anchor="middle" font-size="15" font-weight="700" fill="#1a202c">Predicted label</text>
+</g>
+</svg>

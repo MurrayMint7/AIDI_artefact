@@ -1,0 +1,17 @@
+schema_version: 1
+
+# This protocol is intentionally separate from experiment.yaml. The model,
+# calibration and test configuration was frozen before the protected test was
+# opened and must not be changed to configure post-test reporting evidence.
+latency:
+  device: cpu
+  batch_size: 1
+  warmup_runs: 10
+  measured_runs: 100
+  deterministic_sample_rows: 100
+
+error_analysis:
+  model: distilbert
+  highest_confidence_errors: 50
+  lowest_confidence_cases: 50
+

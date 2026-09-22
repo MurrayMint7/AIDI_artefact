@@ -18,6 +18,7 @@ from .evaluation import (
     calibrate_models,
     evaluate_test,
 )
+from .post_evaluation import EvidenceConfig, build_evaluation_evidence
 from .transformer import (
     ThroughputConfig,
     TokenLengthConfig,
@@ -197,6 +198,52 @@ def main(argv: Sequence[str] | None = None) -> int:
         "--predictions-dir", type=Path, default=Path("artifacts/predictions")
     )
 
+    evidence_parser = commands.add_parser(
+        "evaluation-evidence",
+        help="Benchmark frozen models and build post-test reporting evidence",
+    )
+    evidence_parser.add_argument(
+        "--protocol",
+        type=Path,
+        default=Path("config/evaluation_evidence.yaml"),
+    )
+    _add_common_config(evidence_parser)
+    evidence_parser.add_argument(
+        "--dataset",
+        type=Path,
+        default=Path("data/generated/processed/training_dataset.parquet"),
+    )
+    evidence_parser.add_argument(
+        "--final-metrics",
+        type=Path,
+        default=Path("artifacts/metrics/final_test_metrics.json"),
+    )
+    evidence_parser.add_argument(
+        "--slice-metrics",
+        type=Path,
+        default=Path("artifacts/metrics/final_test_slice_metrics.csv"),
+    )
+    evidence_parser.add_argument(
+        "--predictions",
+        type=Path,
+        default=Path("artifacts/predictions/final_test_predictions.parquet"),
+    )
+    evidence_parser.add_argument(
+        "--distilbert-run", type=Path, default=Path("models/distilbert-run")
+    )
+    evidence_parser.add_argument(
+        "--baseline-model-dir", type=Path, default=Path("models/baselines")
+    )
+    evidence_parser.add_argument(
+        "--metrics-dir", type=Path, default=Path("artifacts/metrics")
+    )
+    evidence_parser.add_argument(
+        "--figures-dir", type=Path, default=Path("artifacts/figures")
+    )
+    evidence_parser.add_argument(
+        "--private-dir", type=Path, default=Path("artifacts/predictions")
+    )
+
     arguments = parser.parse_args(argv)
     logging.basicConfig(
         level=logging.INFO,
@@ -370,6 +417,36 @@ def main(argv: Sequence[str] | None = None) -> int:
                     "metrics": str(test_bundle.metrics_path),
                     "predictions": str(test_bundle.predictions_path),
                     "slice_metrics": str(test_bundle.slice_metrics_path),
+                },
+                indent=2,
+            )
+        )
+        return 0
+
+    if arguments.command == "evaluation-evidence":
+        evidence_bundle = build_evaluation_evidence(
+            EvidenceConfig.from_yaml(
+                arguments.protocol,
+                experiment_config_path=arguments.config,
+                dataset_path=arguments.dataset,
+                final_metrics_path=arguments.final_metrics,
+                slice_metrics_path=arguments.slice_metrics,
+                predictions_path=arguments.predictions,
+                distilbert_run_dir=arguments.distilbert_run,
+                baseline_model_dir=arguments.baseline_model_dir,
+                metrics_dir=arguments.metrics_dir,
+                figures_dir=arguments.figures_dir,
+                private_dir=arguments.private_dir,
+            )
+        )
+        print(
+            json.dumps(
+                {
+                    "benchmark": str(evidence_bundle.benchmark_path),
+                    "error_summary": str(evidence_bundle.error_summary_path),
+                    "private_error_sample": str(evidence_bundle.error_sample_path),
+                    "recommendation": str(evidence_bundle.recommendation_path),
+                    "figures": [str(path) for path in evidence_bundle.figure_paths],
                 },
                 indent=2,
             )

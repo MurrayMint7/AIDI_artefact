@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560" role="img">
+<rect width="100%" height="100%" fill="white"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<text x="450.0" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#1a202c">Test risk-coverage curves and frozen operating points</text>
+<rect x="105" y="90" width="700" height="380" fill="#fff" stroke="#222"/>
+<text x="105.0" y="494" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">0.0</text>
+<text x="245.0" y="494" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">0.2</text>
+<text x="385.0" y="494" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">0.4</text>
+<text x="525.0" y="494" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">0.6</text>
+<text x="665.0" y="494" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">0.8</text>
+<text x="805.0" y="494" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">1.0</text>
+<line x1="105" y1="470.0" x2="805" y2="470.0" stroke="#eee"/>
+<text x="93" y="474.0" text-anchor="end" font-size="12" font-weight="400" fill="#1a202c">0.5</text>
+<line x1="105" y1="394.0" x2="805" y2="394.0" stroke="#eee"/>
+<text x="93" y="398.0" text-anchor="end" font-size="12" font-weight="400" fill="#1a202c">0.6</text>
+<line x1="105" y1="318.0" x2="805" y2="318.0" stroke="#eee"/>
+<text x="93" y="322.0" text-anchor="end" font-size="12" font-weight="400" fill="#1a202c">0.7</text>
+<line x1="105" y1="242.0" x2="805" y2="242.0" stroke="#eee"/>
+<text x="93" y="245.99999999999997" text-anchor="end" font-size="12" font-weight="400" fill="#1a202c">0.8</text>
+<line x1="105" y1="166.0" x2="805" y2="166.0" stroke="#eee"/>
+<text x="93" y="170.0" text-anchor="end" font-size="12" font-weight="400" fill="#1a202c">0.9</text>
+<line x1="105" y1="90.0" x2="805" y2="90.0" stroke="#eee"/>
+<text x="93" y="94.0" text-anchor="end" font-size="12" font-weight="400" fill="#1a202c">1.0</text>
+<text x="455.0" y="520" text-anchor="middle" font-size="14" font-weight="700" fill="#1a202c">Coverage</text>
+<text x="28" y="280.0" text-anchor="middle" font-size="14" font-weight="700" fill="#1a202c" transform="rotate(-90 28 280.0)">Selective accuracy</text>
+<line x1="105" y1="166.0" x2="805" y2="166.0" stroke="#777" stroke-dasharray="7 5"/>
+<text x="800" y="158.0" text-anchor="end" font-size="13" font-weight="400" fill="#1a202c">90% target</text>
+<polyline points="805.0,213.1 796.2,208.8 787.4,204.1 778.6,199.6 769.9,196.0 761.1,192.2 752.3,188.4 743.6,184.8 734.8,180.9 726.0,177.2 717.3,173.9 708.5,170.4 699.7,166.3 691.0,162.9 682.1,159.9 673.4,157.3 664.6,153.4 655.8,150.8 647.1,148.0 638.3,145.8 629.5,143.4 620.8,140.5 612.0,138.4 603.2,135.5 594.5,132.6 585.7,130.0 576.9,128.4 568.2,126.3 559.4,124.1 550.6,122.7 541.8,120.6 533.0,117.9 524.3,116.0 515.5,114.0 506.7,112.5 498.0,111.2 489.2,109.0 480.4,108.1 471.7,107.9 462.9,106.6 454.1,105.7 445.3,104.3 436.6,103.9 427.8,103.0 419.0,102.1 410.3,101.3 401.5,100.8 392.7,100.5 383.9,100.2 375.2,99.2 366.4,97.6 357.6,97.0 348.8,96.7 340.1,96.4 331.3,95.9 322.5,95.3 313.8,95.1 305.0,94.7 296.2,94.4 287.5,94.1 278.7,93.6 269.9,93.2 261.2,92.6 252.3,92.1 243.6,91.9 234.8,92.0 226.0,91.8 217.3,92.0 208.5,92.1 199.7,92.3 191.0,92.1 182.2,91.7 173.4,91.9 164.7,92.2 155.9,92.6 147.1,92.1 138.4,92.7 129.6,93.6 120.8,92.8 112.0,90.0" fill="none" stroke="#2b6cb0" stroke-width="3"/>
+<circle cx="661.1" cy="152.5" r="7" fill="#2b6cb0" stroke="#fff" stroke-width="2"/>
+<text x="671.15" y="142.49632892804698" text-anchor="start" font-size="13" font-weight="700" fill="#1a202c">TF-IDF</text>
+<polyline points="805.0,243.8 796.2,239.6 787.4,235.9 778.6,232.6 769.9,228.6 761.1,224.7 752.3,220.3 743.6,216.4 734.8,212.4 726.0,209.1 717.3,204.9 708.5,201.0 699.7,197.0 691.0,193.4 682.1,189.7 673.4,185.2 664.6,182.0 655.8,177.6 647.1,173.7 638.3,169.4 629.5,165.2 620.8,161.2 612.0,156.4 603.2,152.5 594.5,149.1 585.7,145.2 576.9,141.5 568.2,137.8 559.4,133.7 550.6,130.3 541.8,127.2 533.0,122.8 524.3,119.6 515.5,115.6 506.7,112.6 498.0,109.1 489.2,105.9 480.4,102.5 471.7,101.0 462.9,99.5 454.1,98.3 445.3,97.6 436.6,96.4 427.8,96.0 419.0,95.6 410.3,95.2 401.5,95.1 392.7,94.0 383.9,94.0 375.2,93.8 366.4,93.4 357.6,93.2 348.8,92.7 340.1,92.5 331.3,92.4 322.5,91.8 313.8,91.9 305.0,91.6 296.2,91.6 287.5,91.7 278.7,91.8 269.9,91.9 261.2,91.4 252.3,91.2 243.6,91.3 234.8,91.0 226.0,90.7 217.3,90.8 208.5,90.9 199.7,90.5 191.0,90.5 182.2,90.6 173.4,90.6 164.7,90.7 155.9,90.9 147.1,91.1 138.4,91.3 129.6,91.8 120.8,92.8 112.0,96.3" fill="none" stroke="#c05621" stroke-width="3"/>
+<circle cx="617.1" cy="159.9" r="7" fill="#c05621" stroke="#fff" stroke-width="2"/>
+<text x="627.1083333333333" y="149.8621710901014" text-anchor="start" font-size="13" font-weight="700" fill="#1a202c">DistilBERT</text>
+<text x="450.0" y="535" text-anchor="middle" font-size="13" font-weight="400" fill="#1a202c">Curves use final-test predictions for diagnosis; thresholds were frozen on validation data.</text>
+</g>
+</svg>

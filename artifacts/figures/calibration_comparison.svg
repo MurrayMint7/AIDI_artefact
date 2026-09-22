@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="560" viewBox="0 0 1000 560" role="img">
+<rect width="100%" height="100%" fill="white"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<text x="500.0" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#1a202c">Calibration metrics before and after calibration</text>
+<text x="195" y="102" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">Negative log-likelihood</text>
+<line x1="75" y1="130" x2="75" y2="430" stroke="#222"/>
+<line x1="75" y1="430" x2="315" y2="430" stroke="#222"/>
+<text x="67" y="135" text-anchor="end" font-size="11" font-weight="400" fill="#1a202c">0.80</text>
+<text x="67" y="435" text-anchor="end" font-size="11" font-weight="400" fill="#1a202c">0</text>
+<rect x="93" y="181.3" width="38" height="248.7" fill="#2b6cb0" fill-opacity="0.45"/>
+<text x="112" y="174.3392933064712" text-anchor="middle" font-size="11" font-weight="400" fill="#1a202c">0.663</text>
+<text x="112" y="452" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">B</text>
+<rect x="148" y="261.6" width="38" height="168.4" fill="#2b6cb0" fill-opacity="1.0"/>
+<text x="167" y="254.55965579758515" text-anchor="middle" font-size="11" font-weight="400" fill="#1a202c">0.449</text>
+<text x="167" y="452" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">A</text>
+<rect x="203" y="237.1" width="38" height="192.9" fill="#c05621" fill-opacity="0.45"/>
+<text x="222" y="230.12127958874777" text-anchor="middle" font-size="11" font-weight="400" fill="#1a202c">0.514</text>
+<text x="222" y="452" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">B</text>
+<rect x="258" y="241.7" width="38" height="188.3" fill="#c05621" fill-opacity="1.0"/>
+<text x="277" y="234.65149101067232" text-anchor="middle" font-size="11" font-weight="400" fill="#1a202c">0.502</text>
+<text x="277" y="452" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">A</text>
+<text x="125" y="485" text-anchor="middle" font-size="13" font-weight="400" fill="#1a202c">TF-IDF</text>
+<text x="235" y="485" text-anchor="middle" font-size="13" font-weight="400" fill="#1a202c">DistilBERT</text>
+<text x="510" y="102" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">Multiclass Brier score</text>
+<line x1="390" y1="130" x2="390" y2="430" stroke="#222"/>
+<line x1="390" y1="430" x2="630" y2="430" stroke="#222"/>
+<text x="382" y="135" text-anchor="end" font-size="11" font-weight="400" fill="#1a202c">0.50</text>
+<text x="382" y="435" text-anchor="end" font-size="11" font-weight="400" fill="#1a202c">0</text>
+<rect x="408" y="205.8" width="38" height="224.2" fill="#2b6cb0" fill-opacity="0.45"/>
+<text x="427" y="198.82722471763682" text-anchor="middle" font-size="11" font-weight="400" fill="#1a202c">0.374</text>
+<text x="427" y="452" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">B</text>
+<rect x="463" y="287.0" width="38" height="143.0" fill="#2b6cb0" fill-opacity="1.0"/>
+<text x="482" y="280.0468336911547" text-anchor="middle" font-size="11" font-weight="400" fill="#1a202c">0.238</text>
+<text x="482" y="452" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">A</text>
+<rect x="518" y="260.9" width="38" height="169.1" fill="#c05621" fill-opacity="0.45"/>
+<text x="537" y="253.9103715189052" text-anchor="middle" font-size="11" font-weight="400" fill="#1a202c">0.282</text>
+<text x="537" y="452" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">B</text>
+<rect x="573" y="264.1" width="38" height="165.9" fill="#c05621" fill-opacity="1.0"/>
+<text x="592" y="257.0848749640469" text-anchor="middle" font-size="11" font-weight="400" fill="#1a202c">0.277</text>
+<text x="592" y="452" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">A</text>
+<text x="440" y="485" text-anchor="middle" font-size="13" font-weight="400" fill="#1a202c">TF-IDF</text>
+<text x="550" y="485" text-anchor="middle" font-size="13" font-weight="400" fill="#1a202c">DistilBERT</text>
+<text x="825" y="102" text-anchor="middle" font-size="16" font-weight="700" fill="#1a202c">Expected calibration error</text>
+<line x1="705" y1="130" x2="705" y2="430" stroke="#222"/>
+<line x1="705" y1="430" x2="945" y2="430" stroke="#222"/>
+<text x="697" y="135" text-anchor="end" font-size="11" font-weight="400" fill="#1a202c">0.12</text>
+<text x="697" y="435" text-anchor="end" font-size="11" font-weight="400" fill="#1a202c">0</text>
+<rect x="723" y="181.7" width="38" height="248.3" fill="#2b6cb0" fill-opacity="0.45"/>
+<text x="742" y="174.72225008358214" text-anchor="middle" font-size="11" font-weight="400" fill="#1a202c">0.099</text>
+<text x="742" y="452" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">B</text>
+<rect x="778" y="328.1" width="38" height="101.9" fill="#2b6cb0" fill-opacity="1.0"/>
+<text x="797" y="321.14086849382704" text-anchor="middle" font-size="11" font-weight="400" fill="#1a202c">0.041</text>
+<text x="797" y="452" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">A</text>
+<rect x="833" y="261.0" width="38" height="169.0" fill="#c05621" fill-opacity="0.45"/>
+<text x="852" y="253.98086298976716" text-anchor="middle" font-size="11" font-weight="400" fill="#1a202c">0.068</text>
+<text x="852" y="452" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">B</text>
+<rect x="888" y="274.2" width="38" height="155.8" fill="#c05621" fill-opacity="1.0"/>
+<text x="907" y="267.186827517837" text-anchor="middle" font-size="11" font-weight="400" fill="#1a202c">0.062</text>
+<text x="907" y="452" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">A</text>
+<text x="755" y="485" text-anchor="middle" font-size="13" font-weight="400" fill="#1a202c">TF-IDF</text>
+<text x="865" y="485" text-anchor="middle" font-size="13" font-weight="400" fill="#1a202c">DistilBERT</text>
+<text x="500.0" y="535" text-anchor="middle" font-size="14" font-weight="400" fill="#1a202c">B = before; A = after. Lower is better for all three metrics.</text>
+</g>
+</svg>

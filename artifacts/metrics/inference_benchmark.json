@@ -1,0 +1,51 @@
+{
+  "dataset_sha256": "5eb0c1a746cafbdd59d790e9416d8053d1eb2d7606efae17d60ff11725aa516d",
+  "models": {
+    "distilbert": {
+      "latency_ms": {
+        "maximum": 97.275705,
+        "median": 28.386412,
+        "minimum": 17.237266,
+        "p95": 83.91199455
+      },
+      "load_seconds": 0.46880904698628,
+      "serving_artifact_bytes": 268558796,
+      "serving_artifact_mebibytes": 256.11762619018555
+    },
+    "tfidf_logistic_regression": {
+      "latency_ms": {
+        "maximum": 5.420441,
+        "median": 2.1790515,
+        "minimum": 1.456126,
+        "p95": 3.66464135
+      },
+      "load_seconds": 0.6970475990092382,
+      "serving_artifact_bytes": 6370920,
+      "serving_artifact_mebibytes": 6.075782775878906
+    }
+  },
+  "predictions_sha256": "4d23e99eeb9e4b48174a7233a63086c596b67563c22c856299f92479924339ef",
+  "protocol": {
+    "batch_size": 1,
+    "deterministic_sample_rows": 100,
+    "device": "cpu",
+    "measured_runs": 100,
+    "warmup_runs": 10
+  },
+  "protocol_sha256": "736654de9ebc572173984998b42ba1ed496ed2cb5c167fcceaee1542cb7c2d61",
+  "runtime": {
+    "logical_cpu_count": 16,
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "processor": "AMD Ryzen 7 PRO 8840HS w/ Radeon 780M Graphics",
+    "python": "3.10.12",
+    "scikit_learn": "1.7.2",
+    "torch": "2.11.0+cpu",
+    "torch_num_threads": 8,
+    "transformers": "5.17.0"
+  },
+  "sample_rows": 100,
+  "sample_selection": "sha256(record_id), ascending",
+  "schema_version": 1,
+  "stage": "post_test_inference_benchmark",
+  "test_metrics_sha256": "13b5b47cc93405dcef425c9c59acddec3718bb043aa51f34e56740bef73c931e"
+}

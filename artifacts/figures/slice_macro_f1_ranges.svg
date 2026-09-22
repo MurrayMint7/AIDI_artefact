@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="720" viewBox="0 0 1000 720" role="img">
+<rect width="100%" height="100%" fill="white"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<text x="500.0" y="42" text-anchor="middle" font-size="23" font-weight="700" fill="#1a202c">Within-slice macro-F1 ranges</text>
+<text x="237" y="118" text-anchor="end" font-size="14" font-weight="400" fill="#1a202c">category</text>
+<line x1="642.4" y1="104" x2="646.4" y2="104" stroke="#2b6cb0" stroke-width="7" stroke-linecap="round"/>
+<text x="654.3910326291356" y="108" text-anchor="start" font-size="11" font-weight="400" fill="#1a202c">0.596-0.602</text>
+<line x1="693.1" y1="124" x2="700.4" y2="124" stroke="#c05621" stroke-width="7" stroke-linecap="round"/>
+<text x="708.4053724341765" y="128" text-anchor="start" font-size="11" font-weight="400" fill="#1a202c">0.674-0.685</text>
+<text x="237" y="190" text-anchor="end" font-size="14" font-weight="400" fill="#1a202c">helpful vote zero vs positive</text>
+<line x1="634.3" y1="176" x2="648.4" y2="176" stroke="#2b6cb0" stroke-width="7" stroke-linecap="round"/>
+<text x="656.4010059648483" y="180" text-anchor="start" font-size="11" font-weight="400" fill="#1a202c">0.584-0.605</text>
+<line x1="667.4" y1="196" x2="706.9" y2="196" stroke="#c05621" stroke-width="7" stroke-linecap="round"/>
+<text x="714.9191624062244" y="200" text-anchor="start" font-size="11" font-weight="400" fill="#1a202c">0.634-0.695</text>
+<text x="237" y="262" text-anchor="end" font-size="14" font-weight="400" fill="#1a202c">price band with missing</text>
+<line x1="632.1" y1="248" x2="654.4" y2="248" stroke="#2b6cb0" stroke-width="7" stroke-linecap="round"/>
+<text x="662.3856129781084" y="252" text-anchor="start" font-size="11" font-weight="400" fill="#1a202c">0.580-0.614</text>
+<line x1="690.9" y1="268" x2="711.5" y2="268" stroke="#c05621" stroke-width="7" stroke-linecap="round"/>
+<text x="719.5185099936177" y="272" text-anchor="start" font-size="11" font-weight="400" fill="#1a202c">0.671-0.702</text>
+<text x="237" y="334" text-anchor="end" font-size="14" font-weight="400" fill="#1a202c">rating number band</text>
+<line x1="631.9" y1="320" x2="654.6" y2="320" stroke="#2b6cb0" stroke-width="7" stroke-linecap="round"/>
+<text x="662.5679631298154" y="324" text-anchor="start" font-size="11" font-weight="400" fill="#1a202c">0.580-0.615</text>
+<line x1="697.8" y1="340" x2="700.3" y2="340" stroke="#c05621" stroke-width="7" stroke-linecap="round"/>
+<text x="708.2815964209999" y="344" text-anchor="start" font-size="11" font-weight="400" fill="#1a202c">0.681-0.685</text>
+<text x="237" y="406" text-anchor="end" font-size="14" font-weight="400" fill="#1a202c">test period half</text>
+<line x1="642.3" y1="392" x2="649.8" y2="392" stroke="#2b6cb0" stroke-width="7" stroke-linecap="round"/>
+<text x="657.751586946877" y="396" text-anchor="start" font-size="11" font-weight="400" fill="#1a202c">0.596-0.607</text>
+<line x1="693.5" y1="412" x2="706.2" y2="412" stroke="#c05621" stroke-width="7" stroke-linecap="round"/>
+<text x="714.2169575779649" y="416" text-anchor="start" font-size="11" font-weight="400" fill="#1a202c">0.675-0.694</text>
+<text x="237" y="478" text-anchor="end" font-size="14" font-weight="400" fill="#1a202c">token length quartile</text>
+<line x1="634.5" y1="464" x2="651.3" y2="464" stroke="#2b6cb0" stroke-width="7" stroke-linecap="round"/>
+<text x="659.3153114608444" y="468" text-anchor="start" font-size="11" font-weight="400" fill="#1a202c">0.584-0.610</text>
+<line x1="688.6" y1="484" x2="704.9" y2="484" stroke="#c05621" stroke-width="7" stroke-linecap="round"/>
+<text x="712.9465802438403" y="488" text-anchor="start" font-size="11" font-weight="400" fill="#1a202c">0.667-0.692</text>
+<text x="237" y="550" text-anchor="end" font-size="14" font-weight="400" fill="#1a202c">verified purchase</text>
+<line x1="631.5" y1="536" x2="647.9" y2="536" stroke="#2b6cb0" stroke-width="7" stroke-linecap="round"/>
+<text x="655.9146565021923" y="540" text-anchor="start" font-size="11" font-weight="400" fill="#1a202c">0.579-0.604</text>
+<line x1="699.2" y1="556" x2="701.6" y2="556" stroke="#c05621" stroke-width="7" stroke-linecap="round"/>
+<text x="709.6273190548542" y="560" text-anchor="start" font-size="11" font-weight="400" fill="#1a202c">0.683-0.687</text>
+<line x1="255" y1="599" x2="905" y2="599" stroke="#222"/>
+<line x1="255.0" y1="599" x2="255.0" y2="606" stroke="#222"/>
+<text x="255.0" y="626" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">0.0</text>
+<line x1="385.0" y1="599" x2="385.0" y2="606" stroke="#222"/>
+<text x="385.0" y="626" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">0.2</text>
+<line x1="515.0" y1="599" x2="515.0" y2="606" stroke="#222"/>
+<text x="515.0" y="626" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">0.4</text>
+<line x1="645.0" y1="599" x2="645.0" y2="606" stroke="#222"/>
+<text x="645.0" y="626" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">0.6</text>
+<line x1="775.0" y1="599" x2="775.0" y2="606" stroke="#222"/>
+<text x="775.0" y="626" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">0.8</text>
+<line x1="905.0" y1="599" x2="905.0" y2="606" stroke="#222"/>
+<text x="905.0" y="626" text-anchor="middle" font-size="12" font-weight="400" fill="#1a202c">1.0</text>
+<text x="255" y="696" text-anchor="start" font-size="13" font-weight="700" fill="#2b6cb0">TF-IDF</text>
+<text x="355" y="696" text-anchor="start" font-size="13" font-weight="700" fill="#c05621">DistilBERT</text>
+<text x="580.0" y="696" text-anchor="middle" font-size="14" font-weight="400" fill="#1a202c">Macro-F1</text>
+</g>
+</svg>
