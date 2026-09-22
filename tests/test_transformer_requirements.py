@@ -38,3 +38,6 @@ def test_colab_overlay_does_not_replace_runtime_owned_packages() -> None:
         )
     assert "requirements-colab.txt" in code
     assert "requirements-transformer.txt" not in code
+    assert "capture_output=True" in code
+    assert "critical_issues" in code
+    assert "'pip', 'check'], check=True" not in code
