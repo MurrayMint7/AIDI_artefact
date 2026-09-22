@@ -78,10 +78,11 @@ The aggregate result selects a provisional sequence length. Open
 actual training steps and freeze the sequence length and physical batch size.
 The notebook expects the governed Parquet handoff in private Google Drive; it
 does not contain preparation logic and never commits or pushes changes.
-It installs `requirements-colab.txt`, a minimal overlay that preserves
-Colab-managed Torch, pandas, fsspec and Rich packages. The fully pinned
-`requirements-transformer.txt` remains the local transformer environment and
-must not be installed in Colab.
+It creates an isolated virtual environment that inherits Colab's CUDA-enabled
+Torch, then installs the reproducible project lock through
+`requirements-colab.txt`. This keeps pinned pandas, fsspec and other project
+packages separate from Colab's managed notebook and Drive environment, so no
+runtime restart is required.
 
 ## Local development
 

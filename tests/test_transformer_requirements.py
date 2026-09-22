@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import json
 from pathlib import Path
 
@@ -18,8 +19,8 @@ def test_datasets_fsspec_pin_is_compatible() -> None:
     assert pins["fsspec"] == "2026.6.0"
 
 
-def test_colab_overlay_does_not_replace_runtime_owned_packages() -> None:
-    """The Colab overlay must not install the local environment lock."""
+def test_colab_notebook_isolates_the_reproducible_environment() -> None:
+    """Project pins must not replace packages in Colab's notebook process."""
 
     colab_requirements = Path("requirements-colab.txt").read_text(encoding="utf-8")
     notebook = json.loads(
@@ -30,14 +31,34 @@ def test_colab_overlay_does_not_replace_runtime_owned_packages() -> None:
         for cell in notebook["cells"]
         if cell["cell_type"] == "code"
     )
-    assert "-r requirements.txt" not in colab_requirements
-    for runtime_package in ("pandas", "rich", "fsspec", "torch"):
-        assert not any(
-            line.lower().startswith(runtime_package)
-            for line in colab_requirements.splitlines()
-        )
+    assert "-r requirements-transformer.txt" in colab_requirements
     assert "requirements-colab.txt" in code
-    assert "requirements-transformer.txt" not in code
-    assert "capture_output=True" in code
-    assert "critical_issues" in code
-    assert "'pip', 'check'], check=True" not in code
+    assert "'venv', '--system-site-packages'" in code
+    assert "VENV_PYTHON" in code
+    assert "[sys.executable, '-m', 'pip'" not in code
+    assert "'-m', 'pip', 'check'" not in code
+    assert "if REPO_ROOT.exists():" in code
+    assert "'pull', '--ff-only'" in code
+
+
+def test_colab_notebook_code_cells_are_valid_python() -> None:
+    notebook = json.loads(
+        Path("notebooks/train_distilbert_colab.ipynb").read_text(encoding="utf-8")
+    )
+
+    for index, cell in enumerate(notebook["cells"]):
+        if cell["cell_type"] == "code":
+            source = "".join(cell["source"])
+            tree = ast.parse(source, filename=f"notebook-cell-{index}")
+            for node in ast.walk(tree):
+                if (
+                    isinstance(node, ast.Assign)
+                    and any(
+                        isinstance(target, ast.Name)
+                        and target.id == "preflight_code"
+                        for target in node.targets
+                    )
+                    and isinstance(node.value, ast.Constant)
+                    and isinstance(node.value.value, str)
+                ):
+                    compile(node.value.value, "notebook-preflight", "exec")

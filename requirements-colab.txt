@@ -1,11 +1,4 @@
-# Colab supplies and manages torch, numpy, pandas, fsspec and rich. Do not pin
-# those packages here: replacing them breaks google-colab, gcsfs or bigframes.
-# Their resolved runtime versions are captured in the environment evidence.
-accelerate==1.15.0
-datasets==5.0.1
-duckdb==1.4.1
-huggingface-hub==1.32.0
-safetensors==0.8.0
-tokenizers==0.23.2
-transformers==5.17.0
-typer==0.27.2
+# Install this lock only inside the notebook's isolated virtual environment.
+# The venv inherits Colab's CUDA-enabled torch but shadows other managed
+# packages, so exact project pins cannot break google-colab, gcsfs or bigframes.
+-r requirements-transformer.txt
