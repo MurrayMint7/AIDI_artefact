@@ -64,6 +64,22 @@ def test_colab_preflight_imports_the_transformers_trainer() -> None:
     assert "from transformers import Trainer" in code
 
 
+def test_colab_uses_ephemeral_local_hugging_face_cache() -> None:
+    """Hub cache files must not use the mounted Drive filesystem."""
+
+    notebook = json.loads(
+        Path("notebooks/train_distilbert_colab.ipynb").read_text(encoding="utf-8")
+    )
+    code = "\n".join(
+        "".join(cell["source"])
+        for cell in notebook["cells"]
+        if cell["cell_type"] == "code"
+    )
+
+    assert "MODEL_CACHE = Path('/content/huggingface-cache')" in code
+    assert "MODEL_CACHE = PRIVATE_ROOT" not in code
+
+
 def test_colab_notebook_code_cells_are_valid_python() -> None:
     notebook = json.loads(
         Path("notebooks/train_distilbert_colab.ipynb").read_text(encoding="utf-8")

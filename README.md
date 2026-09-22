@@ -79,7 +79,9 @@ conservative physical batch and this unmeasured limitation. Open
 `notebooks/train_distilbert_colab.ipynb` in a GPU Colab runtime to run the
 required two-epoch fine-tune. The notebook expects the governed Parquet handoff
 in private Google Drive, writes resumable checkpoints and the final private
-bundle there, and never commits or pushes model weights.
+bundle there, and never commits or pushes model weights. Reproducible Hugging
+Face downloads use Colab's local filesystem rather than the mounted Drive;
+this avoids persisting partial or corrupted cache blobs between runtimes.
 It recreates a project-only dependency directory and installs every explicitly
 pinned package there without resolving transitive dependencies. The directory
 is exposed to training subprocesses through `PYTHONPATH`. This avoids Colab's
