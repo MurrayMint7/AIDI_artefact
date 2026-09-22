@@ -1,0 +1,5 @@
+# Install the common and transformer locks first, then install this matching
+# CPU-only Torch build from PyTorch's official wheel index.
+-r requirements-transformer.txt
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.11.0+cpu

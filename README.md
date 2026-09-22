@@ -96,6 +96,19 @@ python3 -m venv .venv
 .venv/bin/pytest
 ```
 
+For local DistilBERT calibration and evaluation, install the matching CPU-only
+Torch build in the same environment:
+
+```bash
+.venv/bin/python -m pip install -r requirements-evaluation.txt
+.venv/bin/python -m amazon_sentiment calibrate-models
+```
+
+The calibration command reads only `validation_policy_calibration`, fits
+temperature scaling for DistilBERT and sigmoid calibration for the frozen
+TF-IDF model, and locks the 90% selective-accuracy review thresholds. It does
+not read the protected test split.
+
 The workspace uses an isolated virtual environment with pinned runtime and
 development requirements. `pip check` should report no broken dependencies.
 

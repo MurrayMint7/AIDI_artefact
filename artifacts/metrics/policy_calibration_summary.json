@@ -1,0 +1,81 @@
+{
+  "calibration_rows": 3000,
+  "config_sha256": "b548d448ddb1d7b63a564ec2302fb3c5060241e0e33c068e7455a934d25d30f8",
+  "dataset_sha256": "5eb0c1a746cafbdd59d790e9416d8053d1eb2d7606efae17d60ff11725aa516d",
+  "evaluation_split": "validation_policy_calibration",
+  "expected_calibration_error_bins": 10,
+  "label_order": [
+    {
+      "id": 0,
+      "label": "negative"
+    },
+    {
+      "id": 1,
+      "label": "neutral"
+    },
+    {
+      "id": 2,
+      "label": "positive"
+    }
+  ],
+  "models": {
+    "distilbert": {
+      "calibrated": {
+        "expected_calibration_error": 0.05355594163134639,
+        "multiclass_brier_score": 0.29225758388366624,
+        "negative_log_likelihood": 0.5308328412582719
+      },
+      "calibration": {
+        "artifact": "models/distilbert-run/calibration.json",
+        "method": "temperature_scaling",
+        "temperature": 1.2755715225830961
+      },
+      "review_policy": {
+        "automatic_rows": 2147,
+        "coverage": 0.7156666666666667,
+        "human_review_rows": 853,
+        "requirement_met": true,
+        "selective_accuracy": 0.9003260363297625,
+        "selective_accuracy_target": 0.9,
+        "threshold": 0.694306130317525
+      },
+      "uncalibrated": {
+        "expected_calibration_error": 0.06184343261426602,
+        "multiclass_brier_score": 0.2975212500461046,
+        "negative_log_likelihood": 0.5461779765343755
+      }
+    },
+    "tfidf_logistic_regression": {
+      "calibrated": {
+        "expected_calibration_error": 0.040072933056616265,
+        "multiclass_brier_score": 0.260337791428942,
+        "negative_log_likelihood": 0.485929796560134
+      },
+      "calibration": {
+        "artifact": "models/baselines/tfidf_sigmoid_calibrated.joblib",
+        "metadata": "models/baselines/tfidf_sigmoid_calibration.json",
+        "method": "sigmoid"
+      },
+      "review_policy": {
+        "automatic_rows": 2365,
+        "coverage": 0.7883333333333333,
+        "human_review_rows": 635,
+        "requirement_met": true,
+        "selective_accuracy": 0.9002114164904863,
+        "selective_accuracy_target": 0.9,
+        "threshold": 0.6623778033466774
+      },
+      "uncalibrated": {
+        "expected_calibration_error": 0.08896592814731906,
+        "multiclass_brier_score": 0.3964954269499511,
+        "negative_log_likelihood": 0.6992012490536381
+      }
+    }
+  },
+  "predictions_sha256": "8ca1c160ffcb77ab8a1f9cad7f97d47119e04fda562b27cc5cfb26cdea5951f2",
+  "schema_version": 1,
+  "stage": "policy_calibration",
+  "test_evaluated": false,
+  "tfidf_model_sha256": "bcb75f3ca04a30d0a53225c1fe763a9d56f1f0ac8f794df5a2e6d6fa962f376f",
+  "thresholds_sha256": "17422188c82daedd19cb9ed65cdfa18c43b866e948fc0b2169d3721786ba94b9"
+}

@@ -1,0 +1,26 @@
+{
+  "evaluation_split": "validation_policy_calibration",
+  "models": {
+    "distilbert": {
+      "automatic_rows": 2147,
+      "coverage": 0.7156666666666667,
+      "human_review_rows": 853,
+      "requirement_met": true,
+      "selective_accuracy": 0.9003260363297625,
+      "selective_accuracy_target": 0.9,
+      "threshold": 0.694306130317525
+    },
+    "tfidf_logistic_regression": {
+      "automatic_rows": 2365,
+      "coverage": 0.7883333333333333,
+      "human_review_rows": 635,
+      "requirement_met": true,
+      "selective_accuracy": 0.9002114164904863,
+      "selective_accuracy_target": 0.9,
+      "threshold": 0.6623778033466774
+    }
+  },
+  "schema_version": 1,
+  "stage": "policy_calibration",
+  "test_evaluated": false
+}

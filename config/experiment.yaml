@@ -156,6 +156,8 @@ models:
 
 evaluation:
   primary_metric: macro_f1
+  distilbert_inference_batch_size: 16
+  expected_calibration_error_bins: 10
   secondary_metrics:
     - accuracy
     - weighted_f1

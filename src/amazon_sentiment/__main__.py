@@ -12,6 +12,7 @@ from .acquisition import AcquisitionConfig, acquire
 from .baselines import BaselineConfig, train_baselines
 from .benchmark import BenchmarkConfig, benchmark
 from .data_pipeline import PipelineConfig, prepare
+from .evaluation import CalibrationConfig, calibrate_models
 from .transformer import (
     ThroughputConfig,
     TokenLengthConfig,
@@ -131,6 +132,31 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     train_parser.add_argument(
         "--cache-dir", type=Path, default=Path("models/huggingface")
+    )
+
+    calibration_parser = commands.add_parser(
+        "calibrate-models",
+        help="Calibrate frozen models and lock review thresholds without test access",
+    )
+    _add_common_config(calibration_parser)
+    calibration_parser.add_argument(
+        "--dataset",
+        type=Path,
+        default=Path("data/generated/processed/training_dataset.parquet"),
+    )
+    calibration_parser.add_argument(
+        "--distilbert-run", type=Path, default=Path("models/distilbert-run")
+    )
+    calibration_parser.add_argument(
+        "--tfidf-model",
+        type=Path,
+        default=Path("models/baselines/tfidf_logistic_regression.joblib"),
+    )
+    calibration_parser.add_argument(
+        "--metrics-dir", type=Path, default=Path("artifacts/metrics")
+    )
+    calibration_parser.add_argument(
+        "--predictions-dir", type=Path, default=Path("artifacts/predictions")
     )
 
     arguments = parser.parse_args(argv)
@@ -258,6 +284,29 @@ def main(argv: Sequence[str] | None = None) -> int:
                     "validation_outputs": str(training_bundle.validation_outputs_path),
                     "summary": str(training_bundle.training_summary_path),
                     "environment": str(training_bundle.environment_path),
+                },
+                indent=2,
+            )
+        )
+        return 0
+
+    if arguments.command == "calibrate-models":
+        calibration_bundle = calibrate_models(
+            CalibrationConfig.from_yaml(
+                arguments.config,
+                dataset_path=arguments.dataset,
+                distilbert_run_dir=arguments.distilbert_run,
+                tfidf_model_path=arguments.tfidf_model,
+                metrics_dir=arguments.metrics_dir,
+                predictions_dir=arguments.predictions_dir,
+            )
+        )
+        print(
+            json.dumps(
+                {
+                    "summary": str(calibration_bundle.summary_path),
+                    "thresholds": str(calibration_bundle.thresholds_path),
+                    "predictions": str(calibration_bundle.predictions_path),
                 },
                 indent=2,
             )
