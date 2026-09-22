@@ -1,4 +1,6 @@
-# Install this lock only into the notebook's project dependency directory.
-# PYTHONPATH exposes these pins to training subprocesses while Colab's
-# CUDA-enabled torch remains available and the notebook kernel stays untouched.
+# Install every explicitly pinned package in this lock into the notebook's
+# project dependency directory with pip --no-deps. That flag is intentional:
+# dependency resolution for Accelerate would otherwise copy a new Torch build
+# into the target while torchvision remains in Colab's managed environment.
+# PYTHONPATH exposes these pins while retaining Colab's matched Torch/CUDA stack.
 -r requirements-transformer.txt

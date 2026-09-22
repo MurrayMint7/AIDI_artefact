@@ -20,7 +20,7 @@ def test_datasets_fsspec_pin_is_compatible() -> None:
 
 
 def test_colab_notebook_isolates_dependencies_without_venv() -> None:
-    """Project pins must not rely on Colab providing ensurepip for venv."""
+    """Project pins must not replace Colab's matched Torch/CUDA stack."""
 
     colab_requirements = Path("requirements-colab.txt").read_text(encoding="utf-8")
     notebook = json.loads(
@@ -35,14 +35,33 @@ def test_colab_notebook_isolates_dependencies_without_venv() -> None:
     assert "requirements-colab.txt" in code
     assert "'-m', 'venv'" not in code
     assert "'--target', str(DEPS_ROOT)" in code
+    assert "'--no-deps'" in code
+    assert "shutil.rmtree(DEPS_ROOT)" in code
     assert "PYTHONPATH" in code
     assert "RUN_ENV" in code
     assert "RUN_PYTHON" in code
+    assert "subprocess.Popen" in code
+    assert "stderr=subprocess.STDOUT" in code
     assert "'-m', 'pip', 'check'" not in code
     assert "if REPO_ROOT.exists():" in code
     assert "'pull', '--ff-only'" in code
     assert "'amazon_sentiment', 'train-transformer'" in code
     assert "'amazon_sentiment', 'throughput'" not in code
+
+
+def test_colab_preflight_imports_the_transformers_trainer() -> None:
+    """Catch binary dependency conflicts before starting the training command."""
+
+    notebook = json.loads(
+        Path("notebooks/train_distilbert_colab.ipynb").read_text(encoding="utf-8")
+    )
+    code = "\n".join(
+        "".join(cell["source"])
+        for cell in notebook["cells"]
+        if cell["cell_type"] == "code"
+    )
+
+    assert "from transformers import Trainer" in code
 
 
 def test_colab_notebook_code_cells_are_valid_python() -> None:

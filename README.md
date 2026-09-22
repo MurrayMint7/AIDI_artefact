@@ -80,11 +80,11 @@ conservative physical batch and this unmeasured limitation. Open
 required two-epoch fine-tune. The notebook expects the governed Parquet handoff
 in private Google Drive, writes resumable checkpoints and the final private
 bundle there, and never commits or pushes model weights.
-It installs the reproducible project lock into a project-only dependency
-directory exposed to training subprocesses through `PYTHONPATH`. This avoids
-Colab's unavailable `venv`/`ensurepip` path, retains its CUDA-enabled Torch and
-keeps pinned project packages separate from the managed notebook and Drive
-environment, so no runtime restart is required.
+It recreates a project-only dependency directory and installs every explicitly
+pinned package there without resolving transitive dependencies. The directory
+is exposed to training subprocesses through `PYTHONPATH`. This avoids Colab's
+unavailable `venv`/`ensurepip` path and prevents pip from replacing one half of
+Colab's matched Torch/torchvision/CUDA stack, so no runtime restart is required.
 
 ## Local development
 
