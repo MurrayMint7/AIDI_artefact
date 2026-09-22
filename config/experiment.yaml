@@ -144,6 +144,9 @@ models:
     epochs: 2
     learning_rate: 0.00002
     weight_decay: 0.01
+    max_length: 256
+    per_device_batch_size: 8
+    gradient_accumulation_steps: 4
     effective_batch_size: 32
     max_length_candidates: [128, 256]
     minimum_token_coverage: 0.90

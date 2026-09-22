@@ -39,6 +39,8 @@ def test_colab_notebook_isolates_the_reproducible_environment() -> None:
     assert "'-m', 'pip', 'check'" not in code
     assert "if REPO_ROOT.exists():" in code
     assert "'pull', '--ff-only'" in code
+    assert "'amazon_sentiment', 'train-transformer'" in code
+    assert "'amazon_sentiment', 'throughput'" not in code
 
 
 def test_colab_notebook_code_cells_are_valid_python() -> None:

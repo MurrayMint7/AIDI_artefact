@@ -15,8 +15,10 @@ from .data_pipeline import PipelineConfig, prepare
 from .transformer import (
     ThroughputConfig,
     TokenLengthConfig,
+    TransformerTrainingConfig,
     analyse_token_lengths,
     benchmark_training_throughput,
+    train_transformer,
 )
 
 
@@ -107,6 +109,27 @@ def main(argv: Sequence[str] | None = None) -> int:
         "--output-dir", type=Path, default=Path("artifacts/metrics")
     )
     throughput_parser.add_argument(
+        "--cache-dir", type=Path, default=Path("models/huggingface")
+    )
+
+    train_parser = commands.add_parser(
+        "train-transformer", help="Fine-tune and checkpoint DistilBERT on CUDA"
+    )
+    _add_common_config(train_parser, default=Path("config/distilbert.yaml"))
+    train_parser.add_argument(
+        "--dataset",
+        type=Path,
+        default=Path("data/generated/processed/training_dataset.parquet"),
+    )
+    train_parser.add_argument(
+        "--decision",
+        type=Path,
+        default=Path("artifacts/metrics/distilbert_training_decision.json"),
+    )
+    train_parser.add_argument(
+        "--output-dir", type=Path, default=Path("models/distilbert-run")
+    )
+    train_parser.add_argument(
         "--cache-dir", type=Path, default=Path("models/huggingface")
     )
 
@@ -212,6 +235,29 @@ def main(argv: Sequence[str] | None = None) -> int:
                     "results": str(throughput_bundle.results_path),
                     "decision": str(throughput_bundle.decision_path),
                     "environment": str(throughput_bundle.environment_path),
+                },
+                indent=2,
+            )
+        )
+        return 0
+
+    if arguments.command == "train-transformer":
+        training_bundle = train_transformer(
+            TransformerTrainingConfig.from_yaml(
+                arguments.config,
+                dataset_path=arguments.dataset,
+                decision_path=arguments.decision,
+                output_dir=arguments.output_dir,
+                cache_dir=arguments.cache_dir,
+            )
+        )
+        print(
+            json.dumps(
+                {
+                    "model": str(training_bundle.model_dir),
+                    "validation_outputs": str(training_bundle.validation_outputs_path),
+                    "summary": str(training_bundle.training_summary_path),
+                    "environment": str(training_bundle.environment_path),
                 },
                 indent=2,
             )

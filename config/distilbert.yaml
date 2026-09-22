@@ -26,6 +26,9 @@ throughput_pilot:
   maximum_projected_training_hours: 8.0
 
 training:
+  max_length: 256
+  per_device_batch_size: 8
+  effective_batch_size: 32
   epochs: 2
   learning_rate: 0.00002
   weight_decay: 0.01

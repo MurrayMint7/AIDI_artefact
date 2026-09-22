@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "status": "frozen_without_throughput_pilot",
+  "reason": "The optional Colab throughput pilot was skipped after repeated managed-runtime errors. Sequence length remains evidence-based; physical batch size is a conservative starting value and is not backed by a throughput measurement.",
+  "max_length": 256,
+  "per_device_batch_size": 8,
+  "gradient_accumulation_steps": 4,
+  "effective_batch_size": 32,
+  "token_coverage": 0.951697,
+  "minimum_token_coverage": 0.9,
+  "dataset_sha256": "5eb0c1a746cafbdd59d790e9416d8053d1eb2d7606efae17d60ff11725aa516d",
+  "test_evaluated": false,
+  "policy_calibration_evaluated": false,
+  "limitation": "Actual GPU memory use and projected training time were not measured before fine-tuning. If batch size 8 exceeds memory, reduce it to 4 and increase gradient accumulation to 8, then record that deviation."
+}

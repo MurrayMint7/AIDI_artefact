@@ -60,7 +60,7 @@ evidence reports.
 Generated source data, row-level manifests and model files stay outside Git.
 Aggregate baseline metrics are written to `artifacts/metrics/` for report evidence.
 
-## DistilBERT pilot
+## DistilBERT training
 
 Install the optional tokenizer stack locally, then measure token coverage without
 reading the policy-calibration or test subsets:
@@ -73,11 +73,13 @@ reading the policy-calibration or test subsets:
   --output-dir artifacts/metrics --cache-dir models/huggingface
 ```
 
-The aggregate result selects a provisional sequence length. Open
-`notebooks/train_distilbert_colab.ipynb` in a GPU Colab runtime to benchmark
-actual training steps and freeze the sequence length and physical batch size.
-The notebook expects the governed Parquet handoff in private Google Drive; it
-does not contain preparation logic and never commits or pushes changes.
+The aggregate result selected 256 tokens. The optional throughput pilot was
+skipped; `artifacts/metrics/distilbert_training_decision.json` records the
+conservative physical batch and this unmeasured limitation. Open
+`notebooks/train_distilbert_colab.ipynb` in a GPU Colab runtime to run the
+required two-epoch fine-tune. The notebook expects the governed Parquet handoff
+in private Google Drive, writes resumable checkpoints and the final private
+bundle there, and never commits or pushes model weights.
 It creates an isolated virtual environment that inherits Colab's CUDA-enabled
 Torch, then installs the reproducible project lock through
 `requirements-colab.txt`. This keeps pinned pandas, fsspec and other project

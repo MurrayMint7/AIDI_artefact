@@ -10,8 +10,9 @@ import statistics
 import subprocess
 import time
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any, Mapping, Protocol
 
 import numpy as np
 import pandas as pd
@@ -185,6 +186,455 @@ class ThroughputBundle:
     results_path: Path
     decision_path: Path
     environment_path: Path
+
+
+@dataclass(frozen=True)
+class TransformerTrainingConfig:
+    """Frozen inputs for the governed DistilBERT fine-tuning run."""
+
+    config_path: Path
+    dataset_path: Path
+    decision_path: Path
+    output_dir: Path
+    cache_dir: Path | None
+    model_id: str
+    revision: str
+    num_labels: int
+    max_length: int
+    per_device_batch_size: int
+    gradient_accumulation_steps: int
+    effective_batch_size: int
+    epochs: int
+    learning_rate: float
+    weight_decay: float
+    dynamic_padding: bool
+    seed: int
+    selection_metric: str
+    checkpoint_frequency: str
+    included_splits: tuple[str, ...] = ("train", "validation_model_selection")
+
+    @classmethod
+    def from_yaml(
+        cls,
+        config_path: str | Path,
+        *,
+        dataset_path: str | Path,
+        decision_path: str | Path,
+        output_dir: str | Path,
+        cache_dir: str | Path | None = None,
+    ) -> "TransformerTrainingConfig":
+        resolved_config = Path(config_path)
+        settings = yaml.safe_load(resolved_config.read_text(encoding="utf-8"))
+        if not isinstance(settings, dict):
+            raise SchemaError("DistilBERT configuration must be a YAML mapping")
+
+        model = settings.get("model", {})
+        training = settings.get("training", {})
+        resolved_decision = Path(decision_path)
+        if not resolved_decision.is_file():
+            raise FileNotFoundError(resolved_decision)
+        decision = json.loads(resolved_decision.read_text(encoding="utf-8"))
+        if decision.get("status") not in {
+            "frozen",
+            "frozen_without_throughput_pilot",
+        }:
+            raise SchemaError("DistilBERT training decision is not frozen")
+
+        model_id = str(model.get("model_id", "")).strip()
+        revision = str(model.get("revision", "")).strip()
+        num_labels = int(model.get("num_labels", 0))
+        max_length = int(training.get("max_length", 0))
+        batch_size = int(training.get("per_device_batch_size", 0))
+        effective_batch_size = int(training.get("effective_batch_size", 0))
+        if not model_id or not revision or num_labels != 3:
+            raise SchemaError("Training requires a model_id, immutable revision and labels")
+        if min(max_length, batch_size, effective_batch_size) <= 0:
+            raise SchemaError("Training lengths and batch sizes must be positive")
+        if effective_batch_size % batch_size:
+            raise SchemaError("Effective batch size must be divisible by physical batch size")
+        accumulation_steps = effective_batch_size // batch_size
+
+        frozen_values = {
+            "max_length": max_length,
+            "per_device_batch_size": batch_size,
+            "gradient_accumulation_steps": accumulation_steps,
+            "effective_batch_size": effective_batch_size,
+        }
+        for name, expected in frozen_values.items():
+            if int(decision.get(name, 0)) != expected:
+                raise SchemaError(
+                    f"Training decision {name} does not match the YAML value {expected}"
+                )
+
+        epochs = int(training.get("epochs", 0))
+        learning_rate = float(training.get("learning_rate", 0.0))
+        weight_decay = float(training.get("weight_decay", -1.0))
+        selection_metric = str(training.get("selection_metric", "")).strip()
+        checkpoint_frequency = str(training.get("checkpoint_frequency", "")).strip()
+        if epochs <= 0 or learning_rate <= 0.0 or weight_decay < 0.0:
+            raise SchemaError("Training epochs, learning rate and weight decay are invalid")
+        if selection_metric != "macro_f1":
+            raise SchemaError("DistilBERT selection_metric must be macro_f1")
+        if checkpoint_frequency != "each_epoch":
+            raise SchemaError("DistilBERT checkpoints must be saved after each epoch")
+        dynamic_padding = bool(training.get("dynamic_padding", True))
+        if not dynamic_padding:
+            raise SchemaError("The governed DistilBERT run requires dynamic padding")
+
+        return cls(
+            config_path=resolved_config,
+            dataset_path=Path(dataset_path),
+            decision_path=resolved_decision,
+            output_dir=Path(output_dir),
+            cache_dir=Path(cache_dir) if cache_dir is not None else None,
+            model_id=model_id,
+            revision=revision,
+            num_labels=num_labels,
+            max_length=max_length,
+            per_device_batch_size=batch_size,
+            gradient_accumulation_steps=accumulation_steps,
+            effective_batch_size=effective_batch_size,
+            epochs=epochs,
+            learning_rate=learning_rate,
+            weight_decay=weight_decay,
+            dynamic_padding=dynamic_padding,
+            seed=int(training.get("seed", 42)),
+            selection_metric=selection_metric,
+            checkpoint_frequency=checkpoint_frequency,
+        )
+
+
+@dataclass(frozen=True)
+class TransformerBackendResult:
+    """In-memory result returned by a hardware-specific training backend."""
+
+    model_dir: Path
+    validation_logits: np.ndarray
+    validation_label_ids: np.ndarray
+    metrics: Mapping[str, Any]
+    training_seconds: float
+    resumed_from_checkpoint: str | None
+    environment: Mapping[str, Any]
+
+
+class TransformerTrainingBackend(Protocol):
+    """Hardware boundary used by the governed training orchestration."""
+
+    def train(
+        self,
+        config: TransformerTrainingConfig,
+        training: pd.DataFrame,
+        validation: pd.DataFrame,
+    ) -> TransformerBackendResult: ...
+
+
+@dataclass(frozen=True)
+class TransformerTrainingBundle:
+    """Private model outputs and aggregate evidence from fine-tuning."""
+
+    model_dir: Path
+    validation_outputs_path: Path
+    training_summary_path: Path
+    environment_path: Path
+
+
+def train_transformer(
+    config: TransformerTrainingConfig,
+    *,
+    backend: TransformerTrainingBackend | None = None,
+) -> TransformerTrainingBundle:
+    """Fine-tune on training data and select only on model-selection validation."""
+
+    _validate_training_dataset_schema(config.dataset_path)
+    frame = pd.read_parquet(
+        config.dataset_path,
+        columns=["text", "sentiment_id", "sentiment_label", "source_category", "split"],
+        filters=[("split", "in", list(config.included_splits))],
+    )
+    unexpected = set(frame["split"].astype(str)).difference(config.included_splits)
+    if unexpected:
+        raise SchemaError(f"Training read unexpected protected splits: {sorted(unexpected)}")
+    training = frame.loc[frame["split"].eq("train")].reset_index(drop=True)
+    validation = frame.loc[
+        frame["split"].eq("validation_model_selection")
+    ].reset_index(drop=True)
+    if training.empty or validation.empty:
+        raise SchemaError("DistilBERT needs training and model-selection validation rows")
+    if frame["text"].isna().any() or frame["text"].astype(str).str.strip().eq("").any():
+        raise SchemaError("DistilBERT training encountered empty review text")
+    observed_ids = set(frame["sentiment_id"].astype(int).unique())
+    expected_ids = set(range(config.num_labels))
+    if observed_ids != expected_ids:
+        raise SchemaError(
+            f"DistilBERT expected label IDs {sorted(expected_ids)}, got {sorted(observed_ids)}"
+        )
+
+    decision = json.loads(config.decision_path.read_text(encoding="utf-8"))
+    expected_dataset_hash = decision.get("dataset_sha256")
+    dataset_hash = _sha256(config.dataset_path)
+    if expected_dataset_hash is not None and expected_dataset_hash != dataset_hash:
+        raise SchemaError("Training decision and DistilBERT dataset hashes do not match")
+
+    config.output_dir.mkdir(parents=True, exist_ok=True)
+    identity_path = config.output_dir / "run_identity.json"
+    run_identity = {
+        "schema_version": 1,
+        "model_id": config.model_id,
+        "model_revision": config.revision,
+        "config_sha256": _sha256(config.config_path),
+        "dataset_sha256": dataset_hash,
+        "decision_sha256": _sha256(config.decision_path),
+    }
+    if identity_path.is_file():
+        existing_identity = json.loads(identity_path.read_text(encoding="utf-8"))
+        if existing_identity != run_identity:
+            raise SchemaError(
+                "Cannot resume existing training run with changed model, config, "
+                "dataset or decision"
+            )
+    else:
+        _write_json(identity_path, run_identity)
+
+    resolved_backend = backend or HuggingFaceTrainerBackend()
+    result = resolved_backend.train(config, training, validation)
+    if not result.model_dir.is_dir():
+        raise RuntimeError(f"Training backend did not create model bundle: {result.model_dir}")
+
+    logits = np.asarray(result.validation_logits, dtype=np.float32)
+    label_ids = np.asarray(result.validation_label_ids, dtype=np.int64)
+    if logits.shape != (len(validation), config.num_labels):
+        raise RuntimeError(
+            "Training backend returned invalid validation logits shape: "
+            f"{logits.shape}, expected {(len(validation), config.num_labels)}"
+        )
+    expected_validation_ids = validation["sentiment_id"].to_numpy(dtype=np.int64)
+    if not np.array_equal(label_ids, expected_validation_ids):
+        raise RuntimeError("Training backend returned misaligned validation labels")
+
+    validation_outputs_path = config.output_dir / "validation_model_selection_outputs.npz"
+    training_summary_path = config.output_dir / "training_summary.json"
+    environment_path = config.output_dir / "environment.json"
+    np.savez_compressed(
+        validation_outputs_path,
+        logits=logits,
+        label_ids=label_ids,
+    )
+    _write_json(
+        training_summary_path,
+        {
+            "schema_version": 1,
+            "stage": "distilbert_fine_tuning",
+            "model_id": config.model_id,
+            "model_revision": config.revision,
+            "training_rows": int(len(training)),
+            "model_selection_rows": int(len(validation)),
+            "policy_calibration_evaluated": False,
+            "test_evaluated": False,
+            "max_length": config.max_length,
+            "per_device_batch_size": config.per_device_batch_size,
+            "gradient_accumulation_steps": config.gradient_accumulation_steps,
+            "effective_batch_size": config.effective_batch_size,
+            "epochs": config.epochs,
+            "selection_metric": config.selection_metric,
+            "training_seconds": round(float(result.training_seconds), 6),
+            "resumed_from_checkpoint": result.resumed_from_checkpoint,
+            "metrics": dict(result.metrics),
+            "config_sha256": _sha256(config.config_path),
+            "dataset_sha256": dataset_hash,
+            "decision_sha256": _sha256(config.decision_path),
+            "validation_outputs_sha256": _sha256(validation_outputs_path),
+        },
+    )
+    _write_json(
+        environment_path,
+        {
+            "schema_version": 1,
+            "platform": platform.platform(),
+            "python": platform.python_version(),
+            "git_commit": _git_commit(),
+            **dict(result.environment),
+        },
+    )
+    return TransformerTrainingBundle(
+        model_dir=result.model_dir,
+        validation_outputs_path=validation_outputs_path,
+        training_summary_path=training_summary_path,
+        environment_path=environment_path,
+    )
+
+
+class HuggingFaceTrainerBackend:
+    """CUDA backend with epoch checkpoints and best-macro-F1 selection."""
+
+    def train(
+        self,
+        config: TransformerTrainingConfig,
+        training: pd.DataFrame,
+        validation: pd.DataFrame,
+    ) -> TransformerBackendResult:
+        try:
+            import torch
+            from sklearn.metrics import f1_score
+            from transformers import (
+                AutoModelForSequenceClassification,
+                AutoTokenizer,
+                DataCollatorWithPadding,
+                Trainer,
+                TrainingArguments,
+            )
+            from transformers.trainer_utils import get_last_checkpoint
+        except ImportError as error:  # pragma: no cover - exercised in Colab
+            raise RuntimeError(
+                "DistilBERT training requires PyTorch, Transformers and Accelerate"
+            ) from error
+        if not torch.cuda.is_available():
+            raise RuntimeError("CUDA is required for the governed DistilBERT training run")
+
+        cache_dir = str(config.cache_dir) if config.cache_dir is not None else None
+        tokenizer = AutoTokenizer.from_pretrained(
+            config.model_id,
+            revision=config.revision,
+            cache_dir=cache_dir,
+            use_fast=True,
+        )
+        encoded_training = tokenizer(
+            training["text"].astype(str).tolist(),
+            add_special_tokens=True,
+            truncation=True,
+            max_length=config.max_length,
+            padding=False,
+        )
+        encoded_validation = tokenizer(
+            validation["text"].astype(str).tolist(),
+            add_special_tokens=True,
+            truncation=True,
+            max_length=config.max_length,
+            padding=False,
+        )
+
+        class EncodedDataset(torch.utils.data.Dataset):
+            def __init__(self, encoded: Mapping[str, Any], labels: np.ndarray) -> None:
+                self.encoded = encoded
+                self.labels = labels
+
+            def __len__(self) -> int:
+                return len(self.labels)
+
+            def __getitem__(self, index: int) -> dict[str, Any]:
+                item = {key: values[index] for key, values in self.encoded.items()}
+                item["labels"] = int(self.labels[index])
+                return item
+
+        training_dataset = EncodedDataset(
+            encoded_training,
+            training["sentiment_id"].to_numpy(dtype=np.int64),
+        )
+        validation_dataset = EncodedDataset(
+            encoded_validation,
+            validation["sentiment_id"].to_numpy(dtype=np.int64),
+        )
+        id_to_label = {0: "negative", 1: "neutral", 2: "positive"}
+        model = AutoModelForSequenceClassification.from_pretrained(
+            config.model_id,
+            revision=config.revision,
+            cache_dir=cache_dir,
+            num_labels=config.num_labels,
+            id2label=id_to_label,
+            label2id={label: label_id for label_id, label in id_to_label.items()},
+        )
+        checkpoint_dir = config.output_dir / "checkpoints"
+        checkpoint_dir.mkdir(parents=True, exist_ok=True)
+        latest_checkpoint = get_last_checkpoint(str(checkpoint_dir))
+        arguments = TrainingArguments(
+            output_dir=str(checkpoint_dir),
+            per_device_train_batch_size=config.per_device_batch_size,
+            per_device_eval_batch_size=config.per_device_batch_size,
+            gradient_accumulation_steps=config.gradient_accumulation_steps,
+            num_train_epochs=config.epochs,
+            learning_rate=config.learning_rate,
+            weight_decay=config.weight_decay,
+            eval_strategy="epoch",
+            save_strategy="epoch",
+            logging_strategy="steps",
+            logging_steps=100,
+            load_best_model_at_end=True,
+            metric_for_best_model="macro_f1",
+            greater_is_better=True,
+            save_total_limit=2,
+            seed=config.seed,
+            data_seed=config.seed,
+            fp16=True,
+            report_to="none",
+        )
+
+        def compute_metrics(prediction: Any) -> dict[str, float]:
+            logits = prediction.predictions
+            if isinstance(logits, tuple):
+                logits = logits[0]
+            predicted_ids = np.asarray(logits).argmax(axis=1)
+            return {
+                "macro_f1": float(
+                    f1_score(
+                        prediction.label_ids,
+                        predicted_ids,
+                        labels=list(range(config.num_labels)),
+                        average="macro",
+                        zero_division=0,
+                    )
+                )
+            }
+
+        trainer = Trainer(
+            model=model,
+            args=arguments,
+            train_dataset=training_dataset,
+            eval_dataset=validation_dataset,
+            data_collator=DataCollatorWithPadding(tokenizer=tokenizer, return_tensors="pt"),
+            compute_metrics=compute_metrics,
+        )
+        started_at = datetime.now(timezone.utc).isoformat()
+        started = time.perf_counter()
+        train_result = trainer.train(resume_from_checkpoint=latest_checkpoint)
+        training_seconds = time.perf_counter() - started
+        completed_at = datetime.now(timezone.utc).isoformat()
+        model_dir = config.output_dir / "model"
+        trainer.save_model(str(model_dir))
+        tokenizer.save_pretrained(str(model_dir))
+        trainer.state.save_to_json(str(model_dir / "trainer_state.json"))
+        prediction = trainer.predict(validation_dataset)
+        logits = prediction.predictions
+        if isinstance(logits, tuple):
+            logits = logits[0]
+        metrics = {
+            key: _json_scalar(value)
+            for key, value in {**train_result.metrics, **prediction.metrics}.items()
+        }
+        return TransformerBackendResult(
+            model_dir=model_dir,
+            validation_logits=np.asarray(logits, dtype=np.float32),
+            validation_label_ids=np.asarray(prediction.label_ids, dtype=np.int64),
+            metrics=metrics,
+            training_seconds=training_seconds,
+            resumed_from_checkpoint=latest_checkpoint,
+            environment={
+                "gpu": torch.cuda.get_device_name(0),
+                "gpu_count": torch.cuda.device_count(),
+                "cuda": str(torch.version.cuda),
+                "cudnn": str(torch.backends.cudnn.version()),
+                "torch": str(torch.__version__),
+                "transformers": _package_version("transformers"),
+                "accelerate": _package_version("accelerate"),
+                "tokenizers": _package_version("tokenizers"),
+                "numpy": _package_version("numpy"),
+                "pandas": _package_version("pandas"),
+                "pyarrow": _package_version("pyarrow"),
+                "seed": config.seed,
+                "data_seed": config.seed,
+                "started_at_utc": started_at,
+                "completed_at_utc": completed_at,
+                "checkpoint_dir": str(checkpoint_dir),
+            },
+        )
 
 
 def analyse_token_lengths(
@@ -611,6 +1061,16 @@ def _validate_dataset_schema(path: Path) -> None:
         raise SchemaError(f"Dataset is missing required columns: {sorted(missing)}")
 
 
+def _validate_training_dataset_schema(path: Path) -> None:
+    if not path.is_file():
+        raise FileNotFoundError(path)
+    required = {*REQUIRED_COLUMNS, "sentiment_id"}
+    names = set(pq.ParquetFile(path).schema_arrow.names)
+    missing = required.difference(names)
+    if missing:
+        raise SchemaError(f"Dataset is missing required columns: {sorted(missing)}")
+
+
 def _slice_records(
     frame: pd.DataFrame,
     candidates: tuple[int, ...],
@@ -691,6 +1151,12 @@ def _safe_int(value: Any) -> int | None:
         parsed = int(value)
     except (TypeError, ValueError, OverflowError):
         return None
+
+
+def _json_scalar(value: Any) -> Any:
+    if isinstance(value, np.generic):
+        return value.item()
+    return value
     return parsed if parsed < 10**12 else None
 
 
