@@ -1,4 +1,4 @@
-# Install this lock only inside the notebook's isolated virtual environment.
-# The venv inherits Colab's CUDA-enabled torch but shadows other managed
-# packages, so exact project pins cannot break google-colab, gcsfs or bigframes.
+# Install this lock only into the notebook's project dependency directory.
+# PYTHONPATH exposes these pins to training subprocesses while Colab's
+# CUDA-enabled torch remains available and the notebook kernel stays untouched.
 -r requirements-transformer.txt

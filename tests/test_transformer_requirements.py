@@ -19,8 +19,8 @@ def test_datasets_fsspec_pin_is_compatible() -> None:
     assert pins["fsspec"] == "2026.6.0"
 
 
-def test_colab_notebook_isolates_the_reproducible_environment() -> None:
-    """Project pins must not replace packages in Colab's notebook process."""
+def test_colab_notebook_isolates_dependencies_without_venv() -> None:
+    """Project pins must not rely on Colab providing ensurepip for venv."""
 
     colab_requirements = Path("requirements-colab.txt").read_text(encoding="utf-8")
     notebook = json.loads(
@@ -33,9 +33,11 @@ def test_colab_notebook_isolates_the_reproducible_environment() -> None:
     )
     assert "-r requirements-transformer.txt" in colab_requirements
     assert "requirements-colab.txt" in code
-    assert "'venv', '--system-site-packages'" in code
-    assert "VENV_PYTHON" in code
-    assert "[sys.executable, '-m', 'pip'" not in code
+    assert "'-m', 'venv'" not in code
+    assert "'--target', str(DEPS_ROOT)" in code
+    assert "PYTHONPATH" in code
+    assert "RUN_ENV" in code
+    assert "RUN_PYTHON" in code
     assert "'-m', 'pip', 'check'" not in code
     assert "if REPO_ROOT.exists():" in code
     assert "'pull', '--ff-only'" in code
