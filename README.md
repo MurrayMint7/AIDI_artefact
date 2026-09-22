@@ -78,6 +78,10 @@ The aggregate result selects a provisional sequence length. Open
 actual training steps and freeze the sequence length and physical batch size.
 The notebook expects the governed Parquet handoff in private Google Drive; it
 does not contain preparation logic and never commits or pushes changes.
+It installs `requirements-colab.txt`, a minimal overlay that preserves
+Colab-managed Torch, pandas, fsspec and Rich packages. The fully pinned
+`requirements-transformer.txt` remains the local transformer environment and
+must not be installed in Colab.
 
 ## Local development
 
