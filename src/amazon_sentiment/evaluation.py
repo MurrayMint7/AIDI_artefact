@@ -23,6 +23,7 @@ from sklearn.metrics import (
 )
 
 from .data_pipeline import SchemaError
+from .inference import LocalDistilBertBackend
 
 
 @dataclass(frozen=True)
@@ -182,10 +183,6 @@ class LocalTestEvaluationBackend:
     ) -> Mapping[str, FinalModelOutput]:
         try:
             import torch
-            from transformers import (
-                AutoModelForSequenceClassification,
-                AutoTokenizer,
-            )
         except ImportError as error:  # pragma: no cover - depends on local runtime
             raise RuntimeError(
                 "DistilBERT test evaluation requires a local PyTorch installation"
@@ -230,15 +227,10 @@ class LocalTestEvaluationBackend:
         temperature = float(calibration["temperature"])
         if temperature <= 0:
             raise SchemaError("Frozen DistilBERT temperature must be positive")
-        tokenizer = AutoTokenizer.from_pretrained(
-            str(model_dir), use_fast=True, local_files_only=True
+        runtime = LocalDistilBertBackend(
+            model_dir,
+            device="cuda" if torch.cuda.is_available() else "cpu",
         )
-        transformer = AutoModelForSequenceClassification.from_pretrained(
-            str(model_dir), local_files_only=True
-        )
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        transformer.to(device)
-        transformer.eval()
         evaluation_settings = config.settings.get("evaluation", {})
         batch_size = int(evaluation_settings.get("distilbert_inference_batch_size", 16))
         max_length = int(
@@ -246,27 +238,11 @@ class LocalTestEvaluationBackend:
             .get("distilbert", {})
             .get("max_length", 256)
         )
-        logit_batches: list[np.ndarray] = []
-        token_length_batches: list[np.ndarray] = []
-        with torch.inference_mode():
-            for offset in range(0, len(texts), batch_size):
-                encoded = tokenizer(
-                    texts[offset : offset + batch_size],
-                    add_special_tokens=True,
-                    truncation=True,
-                    max_length=max_length,
-                    padding=True,
-                    return_tensors="pt",
-                )
-                token_length_batches.append(
-                    encoded["attention_mask"].sum(dim=1).cpu().numpy()
-                )
-                encoded = {key: value.to(device) for key, value in encoded.items()}
-                logit_batches.append(
-                    transformer(**encoded).logits.detach().cpu().numpy()
-                )
-        distilbert_logits = np.concatenate(logit_batches, axis=0).astype(np.float64)
-        token_lengths = np.concatenate(token_length_batches).astype(np.int64)
+        distilbert_logits, token_lengths = runtime.predict_many(
+            texts,
+            max_length=max_length,
+            batch_size=batch_size,
+        )
         return {
             "majority": FinalModelOutput(
                 label_ids,

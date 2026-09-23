@@ -152,11 +152,6 @@ def _config(tmp_path: Path) -> EvidenceConfig:
                     "measured_runs": 3,
                     "deterministic_sample_rows": 3,
                 },
-                "error_analysis": {
-                    "model": "distilbert",
-                    "highest_confidence_errors": 2,
-                    "lowest_confidence_cases": 2,
-                },
             }
         ),
         encoding="utf-8",
@@ -270,11 +265,10 @@ def _config(tmp_path: Path) -> EvidenceConfig:
         baseline_model_dir=baseline_dir,
         metrics_dir=tmp_path / "metrics",
         figures_dir=tmp_path / "figures",
-        private_dir=tmp_path / "private",
     )
 
 
-def test_post_evaluation_builds_public_evidence_and_private_error_sample(
+def test_post_evaluation_builds_public_evidence(
     tmp_path: Path,
 ) -> None:
     bundle = build_evaluation_evidence(
@@ -289,18 +283,14 @@ def test_post_evaluation_builds_public_evidence_and_private_error_sample(
     assert recommendation["proposed_ui_policy"]["status"] == (
         "post-test mitigation, not independently validated"
     )
-    summary_text = bundle.error_summary_path.read_text(encoding="utf-8")
-    assert "private review text" not in summary_text
-    private = pd.read_csv(bundle.error_sample_path)
-    assert len(private) == 4
-    assert private["text"].str.contains("private review text").all()
-    assert set(private["coding_status"]) == {"pending_author_review"}
     assert len(bundle.figure_paths) == 5
     assert all(
         path.read_text(encoding="utf-8").startswith("<svg")
         for path in bundle.figure_paths
     )
 
+    assert "error_analysis_summary_sha256" not in recommendation
+    assert not (tmp_path / "private").exists()
 
 def test_post_evaluation_rejects_predictions_changed_after_final_metrics(
     tmp_path: Path,
@@ -314,7 +304,7 @@ def test_post_evaluation_rejects_predictions_changed_after_final_metrics(
         build_evaluation_evidence(config, benchmark_backend=FixedBenchmarkBackend())
 
 
-def test_evaluation_evidence_command_exposes_public_and_private_outputs(
+def test_evaluation_evidence_command_exposes_public_outputs(
     capsys: Any,
 ) -> None:
     with pytest.raises(SystemExit) as exit_info:
@@ -324,5 +314,5 @@ def test_evaluation_evidence_command_exposes_public_and_private_outputs(
     help_text = capsys.readouterr().out
     assert "--protocol" in help_text
     assert "--figures-dir" in help_text
-    assert "--private-dir" in help_text
+    assert "--private-dir" not in help_text
 

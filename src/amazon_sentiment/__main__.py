@@ -240,9 +240,6 @@ def main(argv: Sequence[str] | None = None) -> int:
     evidence_parser.add_argument(
         "--figures-dir", type=Path, default=Path("artifacts/figures")
     )
-    evidence_parser.add_argument(
-        "--private-dir", type=Path, default=Path("artifacts/predictions")
-    )
 
     arguments = parser.parse_args(argv)
     logging.basicConfig(
@@ -436,15 +433,12 @@ def main(argv: Sequence[str] | None = None) -> int:
                 baseline_model_dir=arguments.baseline_model_dir,
                 metrics_dir=arguments.metrics_dir,
                 figures_dir=arguments.figures_dir,
-                private_dir=arguments.private_dir,
             )
         )
         print(
             json.dumps(
                 {
                     "benchmark": str(evidence_bundle.benchmark_path),
-                    "error_summary": str(evidence_bundle.error_summary_path),
-                    "private_error_sample": str(evidence_bundle.error_sample_path),
                     "recommendation": str(evidence_bundle.recommendation_path),
                     "figures": [str(path) for path in evidence_bundle.figure_paths],
                 },

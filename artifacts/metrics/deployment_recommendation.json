@@ -5,7 +5,6 @@
     "distilbert_to_tfidf_serving_size_ratio": 42.15384842377553,
     "no_stakeholder_latency_sla_available": true
   },
-  "error_analysis_summary_sha256": "d04c6edd66629d8eb45763f7d5fab18998bed1d536944a4d24d24f5cfebdc11f",
   "fallback_model": "tfidf_logistic_regression",
   "figure_sha256": {
     "calibration_comparison.svg": "cf8af76c8374e3436847286ffd019813927f3c3abe759ec4c8456f710fdd0245",
@@ -18,7 +17,7 @@
     "Amazon star ratings are distant labels rather than verified sentiment annotations.",
     "The latency result describes one recorded local CPU and batch-one protocol.",
     "The 90% selective-accuracy requirement was illustrative, not stakeholder validated.",
-    "Manual qualitative coding of the private deterministic error sample remains an author review task."
+    "Manual qualitative error coding was excluded from the final project scope; limitations are based on aggregate class, calibration, routing and slice evidence."
   ],
   "predictive_evidence": {
     "distilbert_advantage_95pct_interval": {

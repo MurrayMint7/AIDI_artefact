@@ -11,7 +11,11 @@ weights. See `.gitignore` before adding generated files.
 ## Current status
 
 The governed dataset, local baselines, DistilBERT fine-tune, calibration and
-one-time protected test evaluation are complete. The full preparation run
+one-time protected test evaluation are complete. The shared local inference
+module and Gradio interface apply the frozen calibration and review threshold;
+neutral predictions always require analyst review following the final-test risk
+finding. Stage 5 is complete for the scoped local demonstration. Browser-based
+accessibility and screenshot evidence was not produced and remains an explicit limitation. The full preparation run
 reduced 5,326,143 source reviews to a frozen 48,000-row modelling dataset.
 DistilBERT achieved test macro-F1 0.6844 compared with 0.6017 for TF-IDF, while
 the local CPU evidence records the corresponding latency and size trade-off.
@@ -125,8 +129,8 @@ to overwrite it. Row-level predictions remain under the ignored
 `artifacts/predictions/` directory.
 
 After that one-time result exists, build the local CPU efficiency benchmark,
-aggregate error-analysis evidence and report figures without reopening or
-overwriting the test metric:
+deployment recommendation and report figures without reopening or overwriting
+the test metric:
 
 ```bash
 .venv/bin/python -m amazon_sentiment evaluation-evidence
@@ -134,13 +138,40 @@ overwriting the test metric:
 
 The batch-one benchmark protocol is versioned separately in
 `config/evaluation_evidence.yaml` so the frozen experiment configuration is not
-changed after testing. Aggregate JSON and SVG files are public. The deterministic
-error-coding worksheet contains review text and stays in the ignored
-`artifacts/predictions/` directory; its qualitative theme fields require author
-review before the report describes them as coded findings.
+changed after testing. Aggregate JSON and SVG files are public. Manual qualitative
+error coding is outside the final project scope.
 
 The workspace uses an isolated virtual environment with pinned runtime and
 development requirements. `pip check` should report no broken dependencies.
+
+## Local inference interface
+
+Install the pinned local inference and Gradio environment, then launch the app:
+
+```bash
+.venv/bin/python -m pip install -r requirements-interface.txt
+.venv/bin/python -m pip install -e .
+.venv/bin/python app.py
+```
+
+The server binds to `127.0.0.1:7860` and never creates a public Gradio share
+link. The app checks the local model hash against its calibration metadata at
+startup, shows all calibrated class probabilities, and displays either
+`Automatic route` or `Human review required` in text. Review text is not stored
+in the operational log. The ignored JSONL log contains a generated request ID,
+timestamp, model/config/policy versions, input lengths, prediction, confidence,
+review decision and latency.
+
+Paths can be changed with `--model-dir`, `--thresholds`,
+`--deployment-policy`, `--log-path` and `--port`. The corresponding environment
+variables are `SENTIMENT_CONFIG`, `SENTIMENT_MODEL_DIR`, `SENTIMENT_THRESHOLDS`,
+`SENTIMENT_DEPLOYMENT_POLICY`, `SENTIMENT_LOG_PATH` and `SENTIMENT_PORT`.
+
+Run the offline inference and UI construction checks with:
+
+```bash
+.venv/bin/python -m pytest -q tests/test_inference.py
+```
 
 ## Repository layout
 

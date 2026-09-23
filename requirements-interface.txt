@@ -1,0 +1,21 @@
+# Local CPU inference and Gradio interface.
+-r requirements-evaluation.txt
+annotated-types==0.8.0
+brotli==1.2.0
+fastapi==0.141.1
+gradio==6.28.0
+gradio-client==2.7.1
+groovy==0.1.2
+hf-gradio==0.4.1
+orjson==3.12.0
+pillow==12.3.0
+pydantic==2.13.5
+pydantic-core==2.46.5
+pydub==0.25.1
+python-multipart==0.0.32
+safehttpx==0.1.7
+semantic-version==2.10.0
+starlette==1.7.0
+tomlkit==0.14.0
+typing-inspection==0.4.4
+uvicorn==0.53.0

@@ -1,0 +1,20 @@
+Metadata-Version: 2.4
+Name: amazon-review-sentiment
+Version: 0.1.0
+Summary: Amazon Reviews 2023 sentiment-classification artefact
+Requires-Python: >=3.10
+Requires-Dist: duckdb<1.5,>=1.4.1
+Requires-Dist: joblib<1.7,>=1.5
+Requires-Dist: numpy<2.3,>=2.0
+Requires-Dist: pandas<2.4,>=2.2.3
+Requires-Dist: pyarrow<26,>=21
+Requires-Dist: PyYAML<7,>=6
+Requires-Dist: scikit-learn<1.8,>=1.6
+Provides-Extra: transformer
+Requires-Dist: accelerate==1.15.0; extra == "transformer"
+Requires-Dist: datasets==5.0.1; extra == "transformer"
+Requires-Dist: huggingface-hub==1.32.0; extra == "transformer"
+Requires-Dist: tokenizers==0.23.2; extra == "transformer"
+Requires-Dist: transformers==5.17.0; extra == "transformer"
+Provides-Extra: interface
+Requires-Dist: gradio==6.28.0; extra == "interface"

@@ -10,8 +10,3 @@ latency:
   measured_runs: 100
   deterministic_sample_rows: 100
 
-error_analysis:
-  model: distilbert
-  highest_confidence_errors: 50
-  lowest_confidence_cases: 50
-

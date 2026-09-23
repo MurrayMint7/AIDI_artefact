@@ -25,6 +25,9 @@ transformer = [
   "tokenizers==0.23.2",
   "transformers==5.17.0",
 ]
+interface = [
+  "gradio==6.28.0",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]

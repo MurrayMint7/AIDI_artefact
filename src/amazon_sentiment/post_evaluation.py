@@ -1,8 +1,7 @@
-"""Build post-test efficiency, visual and qualitative-analysis evidence.
+"""Build post-test efficiency, visual and recommendation evidence.
 
 This module consumes the frozen final-test outputs. It never rewrites the
-one-time test metrics and it keeps review text in the ignored predictions
-directory. Public outputs contain aggregate values only.
+one-time test metrics. Public outputs contain aggregate values only.
 """
 
 from __future__ import annotations
@@ -14,7 +13,6 @@ import json
 import math
 import os
 import platform
-import re
 import statistics
 import time
 from dataclasses import dataclass
@@ -27,6 +25,7 @@ import pandas as pd
 import yaml
 
 from .data_pipeline import SchemaError
+from .inference import LocalDistilBertBackend
 
 
 MODEL_LABELS = {
@@ -56,7 +55,6 @@ class EvidenceConfig:
     baseline_model_dir: Path
     metrics_dir: Path
     figures_dir: Path
-    private_dir: Path
     settings: Mapping[str, Any]
 
     @classmethod
@@ -73,25 +71,17 @@ class EvidenceConfig:
         baseline_model_dir: str | Path,
         metrics_dir: str | Path,
         figures_dir: str | Path,
-        private_dir: str | Path,
     ) -> "EvidenceConfig":
         resolved = Path(protocol_path)
         settings = yaml.safe_load(resolved.read_text(encoding="utf-8"))
         if not isinstance(settings, dict):
             raise SchemaError("Evaluation evidence protocol must be a YAML mapping")
         latency = settings.get("latency", {})
-        error = settings.get("error_analysis", {})
         positive_fields = {
             "latency.warmup_runs": latency.get("warmup_runs"),
             "latency.measured_runs": latency.get("measured_runs"),
             "latency.deterministic_sample_rows": latency.get(
                 "deterministic_sample_rows"
-            ),
-            "error_analysis.highest_confidence_errors": error.get(
-                "highest_confidence_errors"
-            ),
-            "error_analysis.lowest_confidence_cases": error.get(
-                "lowest_confidence_cases"
             ),
         }
         for name, value in positive_fields.items():
@@ -99,8 +89,6 @@ class EvidenceConfig:
                 raise SchemaError(f"{name} must be a positive integer")
         if latency.get("device") != "cpu" or latency.get("batch_size") != 1:
             raise SchemaError("Evidence latency protocol must use CPU batch size one")
-        if error.get("model") != "distilbert":
-            raise SchemaError("The declared error-analysis model must be distilbert")
         return cls(
             protocol_path=resolved,
             experiment_config_path=Path(experiment_config_path),
@@ -112,7 +100,6 @@ class EvidenceConfig:
             baseline_model_dir=Path(baseline_model_dir),
             metrics_dir=Path(metrics_dir),
             figures_dir=Path(figures_dir),
-            private_dir=Path(private_dir),
             settings=settings,
         )
 
@@ -122,8 +109,6 @@ class EvaluationEvidenceBundle:
     """Paths produced by the post-test evidence stage."""
 
     benchmark_path: Path
-    error_summary_path: Path
-    error_sample_path: Path
     recommendation_path: Path
     figure_paths: tuple[Path, ...]
 
@@ -148,10 +133,6 @@ class LocalInferenceBenchmarkBackend:
     ) -> Mapping[str, Any]:
         try:
             import torch
-            from transformers import (
-                AutoModelForSequenceClassification,
-                AutoTokenizer,
-            )
         except ImportError as error:  # pragma: no cover - runtime dependency
             raise RuntimeError(
                 "Local latency benchmarking requires PyTorch and Transformers"
@@ -182,14 +163,7 @@ class LocalInferenceBenchmarkBackend:
 
         model_dir = config.distilbert_run_dir / "model"
         started = time.perf_counter()
-        tokenizer = AutoTokenizer.from_pretrained(
-            str(model_dir), use_fast=True, local_files_only=True
-        )
-        transformer = AutoModelForSequenceClassification.from_pretrained(
-            str(model_dir), local_files_only=True
-        )
-        transformer.to(torch.device("cpu"))
-        transformer.eval()
+        runtime = LocalDistilBertBackend(model_dir, device="cpu")
         distilbert_load_seconds = time.perf_counter() - started
         calibration = _read_json(config.distilbert_run_dir / "calibration.json")
         temperature = float(calibration["temperature"])
@@ -197,15 +171,8 @@ class LocalInferenceBenchmarkBackend:
             raise SchemaError("DistilBERT temperature must be positive")
 
         def predict_distilbert(text: str) -> np.ndarray:
-            encoded = tokenizer(
-                text,
-                add_special_tokens=True,
-                truncation=True,
-                max_length=max_length,
-                return_tensors="pt",
-            )
-            with torch.inference_mode():
-                logits = transformer(**encoded).logits.detach().cpu().numpy()
+            output = runtime.predict(text, max_length=max_length)
+            logits = np.asarray(output.logits, dtype=np.float64)[np.newaxis, :]
             return _softmax(logits / temperature)[0]
 
         distilbert_timings = _time_batch_one_predictions(
@@ -250,12 +217,11 @@ def build_evaluation_evidence(
     *,
     benchmark_backend: InferenceBenchmarkBackend | None = None,
 ) -> EvaluationEvidenceBundle:
-    """Build efficiency, plot, error-sampling and recommendation evidence."""
+    """Build efficiency, plot and recommendation evidence."""
 
     final_metrics, predictions, slices = _validate_inputs(config)
     config.metrics_dir.mkdir(parents=True, exist_ok=True)
     config.figures_dir.mkdir(parents=True, exist_ok=True)
-    config.private_dir.mkdir(parents=True, exist_ok=True)
 
     sample_rows = int(config.settings["latency"]["deterministic_sample_rows"])
     texts = _deterministic_latency_texts(
@@ -281,21 +247,6 @@ def build_evaluation_evidence(
     benchmark_path = config.metrics_dir / "inference_benchmark.json"
     _write_json(benchmark_path, benchmark)
 
-    error_sample, error_summary = _build_error_analysis(
-        config,
-        predictions,
-    )
-    error_sample_path = config.private_dir / "error_analysis_sample.csv"
-    error_sample.to_csv(error_sample_path, index=False)
-    error_summary.update(
-        {
-            "private_sample_sha256": _sha256(error_sample_path),
-            "private_sample_committed": False,
-        }
-    )
-    error_summary_path = config.metrics_dir / "error_analysis_summary.json"
-    _write_json(error_summary_path, error_summary)
-
     figure_paths = _generate_figures(
         final_metrics,
         predictions,
@@ -306,13 +257,10 @@ def build_evaluation_evidence(
     recommendation["figure_sha256"] = {
         path.name: _sha256(path) for path in figure_paths
     }
-    recommendation["error_analysis_summary_sha256"] = _sha256(error_summary_path)
     recommendation_path = config.metrics_dir / "deployment_recommendation.json"
     _write_json(recommendation_path, recommendation)
     return EvaluationEvidenceBundle(
         benchmark_path=benchmark_path,
-        error_summary_path=error_summary_path,
-        error_sample_path=error_sample_path,
         recommendation_path=recommendation_path,
         figure_paths=tuple(figure_paths),
     )
@@ -440,139 +388,6 @@ def _summarise_timings(values: list[float]) -> dict[str, float]:
         "minimum": float(min(values)),
         "maximum": float(max(values)),
     }
-
-
-def _build_error_analysis(
-    config: EvidenceConfig,
-    predictions: pd.DataFrame,
-) -> tuple[pd.DataFrame, dict[str, Any]]:
-    settings = config.settings["error_analysis"]
-    high_count = int(settings["highest_confidence_errors"])
-    low_count = int(settings["lowest_confidence_cases"])
-    model = str(settings["model"])
-    predicted_column = f"{model}_predicted_id"
-    confidence_column = f"{model}_confidence"
-    errors = predictions[
-        predictions[predicted_column] != predictions["sentiment_id"]
-    ].copy()
-    errors = errors.sort_values(
-        [confidence_column, "record_id"], ascending=[False, True]
-    )
-    high = errors.head(high_count).copy()
-    high["selection_group"] = "highest_confidence_error"
-    low_pool = predictions[
-        ~predictions["record_id"].isin(high["record_id"])
-    ].sort_values([confidence_column, "record_id"], ascending=[True, True])
-    low = low_pool.head(low_count).copy()
-    low["selection_group"] = "lowest_confidence_case"
-    selected = pd.concat([high, low], ignore_index=True)
-
-    source_columns = [
-        "record_id",
-        "text",
-        "rating",
-        "source_category",
-        "timestamp",
-    ]
-    source = pd.read_parquet(
-        config.dataset_path,
-        columns=[*source_columns, "split"],
-        filters=[("split", "==", "test")],
-    )[source_columns]
-    selected = selected.merge(source, on="record_id", how="left", validate="one_to_one")
-    if selected["text"].isna().any():
-        raise SchemaError("Error-analysis sample does not align with the test dataset")
-    selected["predicted_label"] = selected[predicted_column].map(SENTIMENT_LABELS)
-    selected["word_count"] = selected["text"].astype(str).str.findall(r"\b\w+\b").str.len()
-    selected["screen_very_short"] = selected["word_count"] <= 4
-    selected["screen_mixed_sentiment_cue"] = selected["text"].map(
-        lambda value: _contains_pattern(
-            value, r"\b(but|however|although|though|yet|except|despite)\b"
-        )
-    )
-    selected["screen_transaction_focus"] = selected["text"].map(
-        lambda value: _contains_pattern(
-            value,
-            r"\b(shipping|delivery|delivered|seller|packaging|package|refund|return|returned)\b",
-        )
-    )
-    selected["screen_negation"] = selected["text"].map(
-        lambda value: _contains_pattern(value, r"\b(no|not|never|neither|nor|hardly|barely)\b")
-    )
-    selected["manual_primary_theme"] = ""
-    selected["manual_secondary_theme"] = ""
-    selected["manual_notes"] = ""
-    selected["coding_status"] = "pending_author_review"
-    private_columns = [
-        "selection_group",
-        "record_id",
-        "source_category",
-        "timestamp",
-        "rating",
-        "sentiment_label",
-        "predicted_label",
-        confidence_column,
-        "distilbert_automatic_route",
-        "word_count",
-        "screen_very_short",
-        "screen_mixed_sentiment_cue",
-        "screen_transaction_focus",
-        "screen_negation",
-        "text",
-        "manual_primary_theme",
-        "manual_secondary_theme",
-        "manual_notes",
-        "coding_status",
-    ]
-    selected = selected[private_columns]
-    screening_columns = [
-        "screen_very_short",
-        "screen_mixed_sentiment_cue",
-        "screen_transaction_focus",
-        "screen_negation",
-    ]
-    summary = {
-        "schema_version": 1,
-        "stage": "post_test_error_analysis",
-        "model": model,
-        "selection": {
-            "highest_confidence_errors_requested": high_count,
-            "highest_confidence_errors_selected": int(len(high)),
-            "lowest_confidence_cases_requested": low_count,
-            "lowest_confidence_cases_selected": int(len(low)),
-            "overlap_removed": True,
-            "tie_breaker": "record_id ascending",
-        },
-        "sample_rows": int(len(selected)),
-        "coding_status": "manual qualitative coding pending author review",
-        "screening_note": (
-            "Surface indicators are deterministic lexical screens, not qualitative "
-            "findings. Sarcasm, annotation ambiguity and rating-text contradiction "
-            "require review of the private worksheet."
-        ),
-        "surface_indicator_counts": {
-            column.removeprefix("screen_"): int(selected[column].sum())
-            for column in screening_columns
-        },
-        "selection_group_counts": {
-            str(key): int(value)
-            for key, value in selected["selection_group"].value_counts().items()
-        },
-        "true_label_counts": {
-            str(key): int(value)
-            for key, value in selected["sentiment_label"].value_counts().items()
-        },
-        "predicted_label_counts": {
-            str(key): int(value)
-            for key, value in selected["predicted_label"].value_counts().items()
-        },
-        "contains_review_text": False,
-    }
-    return selected, summary
-
-
-def _contains_pattern(value: Any, pattern: str) -> bool:
-    return re.search(pattern, str(value), flags=re.IGNORECASE) is not None
 
 
 def _generate_figures(
@@ -831,7 +646,8 @@ def _deployment_recommendation(
             "Amazon star ratings are distant labels rather than verified sentiment annotations.",
             "The latency result describes one recorded local CPU and batch-one protocol.",
             "The 90% selective-accuracy requirement was illustrative, not stakeholder validated.",
-            "Manual qualitative coding of the private deterministic error sample remains an author review task.",
+            "Manual qualitative error coding was excluded from the final project scope; "
+            "limitations are based on aggregate class, calibration, routing and slice evidence.",
         ],
     }
 
