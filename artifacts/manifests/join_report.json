@@ -1,0 +1,10 @@
+{
+  "correct_key": "parent_asin",
+  "correct_key_match_rate": 1,
+  "correct_key_matches": 4670756,
+  "correct_key_unmatched": 0,
+  "diagnostic_wrong_key": "asin",
+  "diagnostic_wrong_key_match_rate": 0.5921497504900706,
+  "diagnostic_wrong_key_matches": 2765787,
+  "reviews": 4670756
+}

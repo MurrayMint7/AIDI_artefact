@@ -1,0 +1,47 @@
+{
+  "columns": [
+    "rating",
+    "text",
+    "title",
+    "timestamp",
+    "verified_purchase",
+    "helpful_vote",
+    "parent_asin",
+    "source_category",
+    "normalised_text_sha256",
+    "sentiment_id",
+    "sentiment_label",
+    "record_id",
+    "main_category",
+    "price",
+    "rating_number",
+    "metadata_matched",
+    "split"
+  ],
+  "null_counts": {
+    "helpful_vote": 0,
+    "main_category": 627,
+    "metadata_matched": 0,
+    "normalised_text_sha256": 0,
+    "parent_asin": 0,
+    "price": 19527,
+    "rating": 0,
+    "rating_number": 0,
+    "record_id": 0,
+    "sentiment_id": 0,
+    "sentiment_label": 0,
+    "source_category": 0,
+    "split": 0,
+    "text": 0,
+    "timestamp": 0,
+    "title": 0,
+    "verified_purchase": 0
+  },
+  "row_counts": {
+    "conflicting_label_rows_removed": 359988,
+    "curated_reviews": 48000,
+    "empty_text_removed": 4338,
+    "exact_duplicates_removed": 291061,
+    "source_reviews": 5326143
+  }
+}

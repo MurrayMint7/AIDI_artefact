@@ -1,0 +1,43 @@
+{
+  "config_file": "experiment.yaml",
+  "config_sha256": "bc79941532f9cd01c073a5fc962c18a6111bd9b3ded741eae3100d750129887f",
+  "output": {
+    "filename": "training_dataset.parquet",
+    "rows": 48000,
+    "sha256": "5eb0c1a746cafbdd59d790e9416d8053d1eb2d7606efae17d60ff11725aa516d"
+  },
+  "sources": [
+    {
+      "bytes": 94441517,
+      "category": "All_Beauty",
+      "filename": "All_Beauty.jsonl.gz",
+      "kind": "reviews",
+      "rows": 701528,
+      "sha256": "ee00e66835567c3f12fde6a482f8d7055c22cac2d0924f677263affdd8a0e349"
+    },
+    {
+      "bytes": 39871253,
+      "category": "All_Beauty",
+      "filename": "meta_All_Beauty.jsonl.gz",
+      "kind": "metadata",
+      "rows": 112590,
+      "sha256": "51f8255c2794afd60e274c10d3e2d09dc1f671eba4ba35f74f748d8631216d05"
+    },
+    {
+      "bytes": 814206092,
+      "category": "Video_Games",
+      "filename": "Video_Games.jsonl.gz",
+      "kind": "reviews",
+      "rows": 4624615,
+      "sha256": "52d8762c94a5b99d3bccdb31c15cc6c99e05c89f9042cd3753b3b623a44bc193"
+    },
+    {
+      "bytes": 103096082,
+      "category": "Video_Games",
+      "filename": "meta_Video_Games.jsonl.gz",
+      "kind": "metadata",
+      "rows": 137269,
+      "sha256": "ced9696b0874121327a438bfe9d3d01aba45da158e58f94f4920352d75fc1fc9"
+    }
+  ]
+}

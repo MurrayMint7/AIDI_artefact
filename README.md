@@ -186,7 +186,10 @@ src/amazon_sentiment/           Python package
 tests/fixtures/                 Synthetic, non-Amazon test records
 tests/                          Behavioural tests for acquisition, preparation,
                                 benchmarking and baseline training
-artifacts/                      Aggregate public evidence generated later
+artifacts/manifests/            Aggregate public data-provenance evidence
+artifacts/metrics/              Aggregate metric evidence
+artifacts/figures/              Aggregate figure evidence
+artifacts/accessibility/        Scoped accessibility evidence
 data/                           Ignored source and processed records
 models/                         Ignored local model bundles
 docs/model-card.md, runbook.md  Public handover documentation

@@ -1,0 +1,53 @@
+{
+  "boundaries": {
+    "test_start": "2023-01-01T00:00:00Z",
+    "train_end": "2021-12-31T23:59:59Z",
+    "validation_end": "2022-12-31T23:59:59Z",
+    "validation_start": "2022-01-01T00:00:00Z"
+  },
+  "counts": {
+    "test": 12000,
+    "train": 30000,
+    "validation_model_selection": 3000,
+    "validation_policy_calibration": 3000
+  },
+  "pre_sampling_counts": {
+    "test": 178063,
+    "train": 4070937,
+    "validation": 421756
+  },
+  "pre_sampling_training_class_counts": [
+    {
+      "rows": 119520,
+      "sentiment_label": "negative",
+      "source_category": "All_Beauty"
+    },
+    {
+      "rows": 47505,
+      "sentiment_label": "neutral",
+      "source_category": "All_Beauty"
+    },
+    {
+      "rows": 397226,
+      "sentiment_label": "positive",
+      "source_category": "All_Beauty"
+    },
+    {
+      "rows": 678977,
+      "sentiment_label": "negative",
+      "source_category": "Video_Games"
+    },
+    {
+      "rows": 280641,
+      "sentiment_label": "neutral",
+      "source_category": "Video_Games"
+    },
+    {
+      "rows": 2547068,
+      "sentiment_label": "positive",
+      "source_category": "Video_Games"
+    }
+  ],
+  "seed": 42,
+  "strategy": "preferred_chronological"
+}

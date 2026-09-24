@@ -48,6 +48,7 @@ docs/
 docs/*
 !docs/model-card.md
 !docs/runbook.md
+!docs/evidence-index.md
 
 # Notebook and editor state
 .ipynb_checkpoints/
