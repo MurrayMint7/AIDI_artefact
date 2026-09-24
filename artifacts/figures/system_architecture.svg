@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Amazon review sentiment artefact architecture</title>
+  <desc id="desc">Data and evidence flow from official compressed review and metadata files through the governed data pipeline, model comparison, locked evaluation, shared inference, local interface and analyst review decision.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#34495e"/>
+    </marker>
+    <style>
+      .title { font: 700 30px Arial, Helvetica, sans-serif; fill: #182433; }
+      .lane { font: 700 19px Arial, Helvetica, sans-serif; fill: #24364b; }
+      .box-title { font: 700 17px Arial, Helvetica, sans-serif; fill: #142235; }
+      .box-text { font: 15px Arial, Helvetica, sans-serif; fill: #24364b; }
+      .small { font: 13px Arial, Helvetica, sans-serif; fill: #43546a; }
+      .arrow { stroke: #34495e; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .evidence-arrow { stroke: #58708c; stroke-width: 2.5; stroke-dasharray: 8 6; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" fill="#ffffff"/>
+  <text x="600" y="45" text-anchor="middle" class="title">Amazon review sentiment and triage architecture</text>
+
+  <text x="36" y="103" class="lane">Data and decision path</text>
+  <text x="36" y="596" class="lane">Evidence path</text>
+
+  <rect x="35" y="135" width="190" height="120" rx="12" fill="#e8f1fb" stroke="#2b6cb0" stroke-width="2"/>
+  <text x="130" y="169" text-anchor="middle" class="box-title">Official source files</text>
+  <text x="130" y="198" text-anchor="middle" class="box-text">Reviews JSONL.gz</text>
+  <text x="130" y="222" text-anchor="middle" class="box-text">Metadata JSONL.gz</text>
+  <text x="130" y="244" text-anchor="middle" class="small">All Beauty and Video Games</text>
+
+  <rect x="280" y="125" width="235" height="140" rx="12" fill="#eaf7ef" stroke="#2f855a" stroke-width="2"/>
+  <text x="397.5" y="159" text-anchor="middle" class="box-title">Governed data pipeline</text>
+  <text x="397.5" y="188" text-anchor="middle" class="box-text">Validate and minimise</text>
+  <text x="397.5" y="212" text-anchor="middle" class="box-text">Normalise and deduplicate</text>
+  <text x="397.5" y="236" text-anchor="middle" class="box-text">Join, label, split and sample</text>
+
+  <rect x="570" y="135" width="200" height="120" rx="12" fill="#fff7df" stroke="#b7791f" stroke-width="2"/>
+  <text x="670" y="169" text-anchor="middle" class="box-title">Frozen handoff</text>
+  <text x="670" y="198" text-anchor="middle" class="box-text">Training Parquet</text>
+  <text x="670" y="222" text-anchor="middle" class="box-text">Split manifest</text>
+  <text x="670" y="244" text-anchor="middle" class="small">Versioned configuration</text>
+
+  <rect x="830" y="91" width="220" height="88" rx="12" fill="#f4ecfb" stroke="#805ad5" stroke-width="2"/>
+  <text x="940" y="125" text-anchor="middle" class="box-title">Local baselines</text>
+  <text x="940" y="153" text-anchor="middle" class="box-text">Majority and TF-IDF</text>
+
+  <rect x="830" y="213" width="220" height="88" rx="12" fill="#f4ecfb" stroke="#805ad5" stroke-width="2"/>
+  <text x="940" y="247" text-anchor="middle" class="box-title">Colab training adapter</text>
+  <text x="940" y="275" text-anchor="middle" class="box-text">DistilBERT fine-tuning</text>
+
+  <rect x="765" y="357" width="250" height="112" rx="12" fill="#e9f6f7" stroke="#2c7a7b" stroke-width="2"/>
+  <text x="890" y="391" text-anchor="middle" class="box-title">Locked evaluation</text>
+  <text x="890" y="419" text-anchor="middle" class="box-text">Calibration and threshold</text>
+  <text x="890" y="443" text-anchor="middle" class="box-text">Model and slice comparison</text>
+
+  <rect x="470" y="357" width="220" height="112" rx="12" fill="#e9f6f7" stroke="#2c7a7b" stroke-width="2"/>
+  <text x="580" y="391" text-anchor="middle" class="box-title">Shared inference</text>
+  <text x="580" y="419" text-anchor="middle" class="box-text">predict(text)</text>
+  <text x="580" y="443" text-anchor="middle" class="box-text">Calibrated Prediction</text>
+
+  <rect x="205" y="357" width="200" height="112" rx="12" fill="#fcecec" stroke="#c53030" stroke-width="2"/>
+  <text x="305" y="391" text-anchor="middle" class="box-title">Local Gradio UI</text>
+  <text x="305" y="419" text-anchor="middle" class="box-text">Label and probabilities</text>
+  <text x="305" y="443" text-anchor="middle" class="box-text">Route or request review</text>
+
+  <rect x="35" y="357" width="115" height="112" rx="12" fill="#f0f3f7" stroke="#4a5568" stroke-width="2"/>
+  <text x="92.5" y="391" text-anchor="middle" class="box-title">Analyst</text>
+  <text x="92.5" y="419" text-anchor="middle" class="box-text">Enters</text>
+  <text x="92.5" y="441" text-anchor="middle" class="box-text">review text</text>
+
+  <rect x="1065" y="357" width="110" height="112" rx="12" fill="#f0f3f7" stroke="#4a5568" stroke-width="2"/>
+  <text x="1120" y="391" text-anchor="middle" class="box-title">Policy</text>
+  <text x="1120" y="419" text-anchor="middle" class="box-text">Automatic</text>
+  <text x="1120" y="441" text-anchor="middle" class="box-text">or review</text>
+
+  <rect x="270" y="620" width="660" height="92" rx="12" fill="#f7f9fc" stroke="#58708c" stroke-width="2"/>
+  <text x="600" y="654" text-anchor="middle" class="box-title">Machine-readable evidence bundle</text>
+  <text x="600" y="681" text-anchor="middle" class="box-text">Manifests, quality and join reports, metrics, figures, model card and runbook</text>
+
+  <path d="M225 195 L280 195" class="arrow"/>
+  <path d="M515 195 L570 195" class="arrow"/>
+  <path d="M770 176 C800 176,800 135,830 135" class="arrow"/>
+  <path d="M770 214 C800 214,800 257,830 257" class="arrow"/>
+  <path d="M940 179 L940 338 C940 348,925 357,910 357" class="arrow"/>
+  <path d="M940 301 L940 338 C940 348,925 357,910 357" class="arrow"/>
+  <path d="M765 413 L690 413" class="arrow"/>
+  <path d="M470 413 L405 413" class="arrow"/>
+  <path d="M150 413 L205 413" class="arrow"/>
+  <path d="M205 445 C185 488,120 488,105 469" class="arrow"/>
+  <path d="M1015 413 L1065 413" class="arrow"/>
+
+  <path d="M397 265 L397 620" class="evidence-arrow"/>
+  <path d="M890 469 L890 620" class="evidence-arrow"/>
+  <path d="M305 469 L305 620" class="evidence-arrow"/>
+</svg>
