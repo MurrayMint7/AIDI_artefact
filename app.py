@@ -11,6 +11,20 @@ from amazon_sentiment.inference import InferenceConfig, SentimentPredictor
 from amazon_sentiment.interface import build_app
 
 
+def launch_options(*, port: int, css: str) -> dict[str, object]:
+    """Return the privacy-safe, local-only Gradio launch configuration."""
+
+    return {
+        "server_name": "127.0.0.1",
+        "server_port": port,
+        "share": False,
+        "inbrowser": False,
+        "show_error": False,
+        "css": css,
+        "footer_links": ["api", "gradio", "settings"],
+        "run_history": False,
+    }
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -68,14 +82,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         log_path=arguments.log_path,
     )
     app = build_app(SentimentPredictor(config))
-    app.launch(
-        server_name="127.0.0.1",
-        server_port=arguments.port,
-        share=False,
-        inbrowser=False,
-        show_error=False,
-        css=app.stage5_css,
-    )
+    app.launch(**launch_options(port=arguments.port, css=app.stage5_css))
     return 0
 
 

@@ -252,6 +252,8 @@ def test_interface_presents_label_probabilities_version_and_review_state() -> No
     assert "distilbert:abc123" in rendered.result_html
     assert "<table>" in rendered.result_html
     assert 'aria-live="polite"' in rendered.result_html
+    assert 'aria-atomic="true"' in rendered.result_html
+    assert "Probability summary: Negative 2.0%; Neutral 96.0%; Positive 2.0%." in rendered.result_html
     assert "always require review" in rendered.result_html
 
 
@@ -276,9 +278,41 @@ def test_gradio_app_builds_offline_with_required_controls() -> None:
         component.get("props", {}).get("label")
         for component in config.get("components", [])
     }
+    predict_component = next(
+        component for component in config.get("components", [])
+        if component.get("props", {}).get("value") == "Predict sentiment"
+    )
 
     assert isinstance(demo, gradio.Blocks)
     assert "Review text" in component_labels
     assert "Predict sentiment" in component_values
     assert "Clear" in component_values
     assert config.get("analytics_enabled") is False
+    assert predict_component.get("props", {}).get("elem_id") == "predict-button"
+
+
+def test_gradio_app_attaches_theme_aware_result_styles() -> None:
+    pytest.importorskip("gradio")
+
+    demo = build_app(StubPredictor(_neutral_prediction()))
+    css = demo.stage5_css
+
+    assert ".result-card" in css
+    assert "var(--background-fill-primary" in css
+    assert "var(--body-text-color" in css
+    assert "#result-region .route-status strong" in css
+    assert "#result-region .route-status span" in css
+    assert ".screen-reader-only" in css
+    assert "#predict-button" in css
+    assert "background: #174ea6" in css
+    assert ":root" not in css
+
+
+def test_launch_options_keep_settings_without_browser_run_history() -> None:
+    from app import launch_options
+
+    options = launch_options(port=7860, css="/* test */")
+
+    assert options["footer_links"] == ["api", "gradio", "settings"]
+    assert options["run_history"] is False
+    assert options["css"] == "/* test */"

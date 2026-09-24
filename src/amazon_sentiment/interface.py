@@ -25,7 +25,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 _EMPTY_RESULT = """
-<section id="prediction-result" class="result-card" aria-live="polite">
+<section id="prediction-result" class="result-card" aria-live="polite" aria-atomic="true">
   <h2>Prediction result</h2>
   <p>Submit a review to see the predicted sentiment and routing decision.</p>
 </section>
@@ -89,8 +89,13 @@ def present_prediction(text: str, predictor: Predictor) -> InterfaceResult:
         "</tr>"
         for name, probability in prediction.probabilities.items()
     )
+    probability_summary = "; ".join(
+        f"{html.escape(name.capitalize())} {probability:.1%}"
+        for name, probability in prediction.probabilities.items()
+    )
+
     result_html = f"""
-<section id="prediction-result" class="result-card" aria-live="polite" tabindex="-1">
+<section id="prediction-result" class="result-card" aria-live="polite" aria-atomic="true" tabindex="-1">
   <h2>Prediction result</h2>
   <p class="route-status {route_class}">
     <span aria-hidden="true">{route_icon}</span> <strong>{route_text}</strong>
@@ -101,6 +106,7 @@ def present_prediction(text: str, predictor: Predictor) -> InterfaceResult:
     <dt>Calibrated confidence</dt><dd>{prediction.confidence:.1%}</dd>
     <dt>Model version</dt><dd><code>{html.escape(prediction.model_version)}</code></dd>
   </dl>
+  <p class="screen-reader-only">Probability summary: {probability_summary}.</p>
   <table>
     <caption>Calibrated class probabilities</caption>
     <thead><tr><th scope="col">Sentiment</th><th scope="col">Probability</th></tr></thead>
@@ -123,41 +129,73 @@ def build_app(predictor: Predictor):
         ) from error
 
     css = """
-    :root {
-      --body-text-color: #17202a;
-      --body-background-fill: #ffffff;
-      --primary-600: #174ea6;
-    }
     .gradio-container { max-width: 58rem !important; }
+    #predict-button {
+      background: #174ea6 !important;
+      border-color: #174ea6 !important;
+      color: #ffffff !important;
+    }
+    #predict-button:hover {
+      background: #123f87 !important;
+      border-color: #123f87 !important;
+      color: #ffffff !important;
+    }
+    #predict-button:active {
+      background: #0e326d !important;
+      border-color: #0e326d !important;
+      color: #ffffff !important;
+    }
     button:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
-      outline: 3px solid #111111 !important;
+      outline: 3px solid var(--body-text-color, #111111) !important;
       outline-offset: 3px !important;
     }
-    .validation-error, .error-card {
+    #result-region .result-card {
+      border: 1px solid var(--border-color-primary, #536471);
+      border-radius: 0.5rem;
+      padding: 1rem 1.25rem;
+      background: var(--background-fill-primary, #ffffff);
+      color: var(--body-text-color, #17202a);
+    }
+    #result-region .result-card h2,
+    #result-region .result-card code {
+      color: inherit;
+    }
+    .validation-error, #result-region .result-card.error-card {
       border-left: 0.4rem solid #b3261e;
       padding: 0.75rem 1rem;
       background: #fff4f2;
       color: #5f1410;
     }
-    .result-card {
-      border: 1px solid #536471;
-      border-radius: 0.5rem;
-      padding: 1rem 1.25rem;
-      background: #ffffff;
-      color: #17202a;
-    }
     .route-status { font-size: 1.2rem; padding: 0.65rem; }
+    #result-region .route-status strong,
+    #result-region .route-status span {
+      color: inherit;
+    }
     .review-route { border: 2px solid #8a3b00; background: #fff4e5; color: #542500; }
     .automatic-route { border: 2px solid #176b3a; background: #eefaf2; color: #0b4725; }
-    dl { display: grid; grid-template-columns: minmax(10rem, 1fr) 2fr; gap: 0.4rem 1rem; }
-    dt { font-weight: 700; }
-    dd { margin: 0; }
-    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-    caption { text-align: left; font-weight: 700; margin-bottom: 0.4rem; }
-    th, td { border: 1px solid #697680; padding: 0.55rem; text-align: left; }
-    .scope-note { margin-top: 1rem; font-size: 0.95rem; }
+    #result-region dl { display: grid; grid-template-columns: minmax(10rem, 1fr) 2fr; gap: 0.4rem 1rem; }
+    #result-region dt { font-weight: 700; }
+    #result-region dd { margin: 0; }
+    #result-region table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    #result-region caption { text-align: left; font-weight: 700; margin-bottom: 0.4rem; }
+    #result-region th, #result-region td {
+      border: 1px solid var(--border-color-primary, #697680);
+      padding: 0.55rem;
+      text-align: left;
+    }
+    #result-region .scope-note { margin-top: 1rem; font-size: 0.95rem; }
+    #result-region .screen-reader-only {
+      position: absolute !important;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
     @media (max-width: 35rem) {
-      dl { grid-template-columns: 1fr; }
+      #result-region dl { grid-template-columns: 1fr; }
     }
     """
 
@@ -184,7 +222,11 @@ def build_app(predictor: Predictor):
         )
         validation = gr.HTML(value="", elem_id="input-validation")
         with gr.Row():
-            submit_button = gr.Button("Predict sentiment", variant="primary")
+            submit_button = gr.Button(
+                "Predict sentiment",
+                variant="primary",
+                elem_id="predict-button",
+            )
             clear_button = gr.Button("Clear")
         result = gr.HTML(value=_EMPTY_RESULT, elem_id="result-region")
 
