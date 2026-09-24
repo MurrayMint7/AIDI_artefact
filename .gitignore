@@ -44,6 +44,10 @@ artifacts/logs/
 
 # Local planning, research, and assessment working documents
 docs/
+!docs/
+docs/*
+!docs/model-card.md
+!docs/runbook.md
 
 # Notebook and editor state
 .ipynb_checkpoints/

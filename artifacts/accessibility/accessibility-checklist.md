@@ -5,6 +5,7 @@ Interface: local Gradio 6.28.0 app on `127.0.0.1`
 Scope: Stage 5 implementation, automated checks and live local endpoint smoke test
 Claim boundary: this checklist does not claim WCAG conformance.
 Stage status: complete for the scoped local demonstration, with browser-dependent checks retained as explicit untested limitations.
+Accessibility test procedure: `docs/runbook.md`, section “Accessibility test setup”.
 
 | Check | Status | Evidence | Limitation or future action |
 |---|---|---|---|

@@ -173,6 +173,11 @@ Run the offline inference and UI construction checks with:
 .venv/bin/python -m pytest -q tests/test_inference.py
 ```
 
+## Handover documentation
+
+- The [model card](docs/model-card.md) describes intended use, evaluation, routing policy, limitations and governance boundaries.
+- The [operational runbook](docs/runbook.md) covers current-workspace operation, troubleshooting, recovery and step-by-step accessibility testing.
+
 ## Repository layout
 
 ```text
@@ -184,7 +189,7 @@ tests/                          Behavioural tests for acquisition, preparation,
 artifacts/                      Aggregate public evidence generated later
 data/                           Ignored source and processed records
 models/                         Ignored local model bundles
-docs/                           Ignored local working documentation
+docs/model-card.md, runbook.md  Public handover documentation
 ```
 
 No Git commits are created automatically during implementation.
