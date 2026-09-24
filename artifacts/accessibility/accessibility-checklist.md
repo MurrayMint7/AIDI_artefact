@@ -41,14 +41,15 @@ content and Gradio control construction. A live local Gradio client request also
 completed against the real DistilBERT bundle and returned the required neutral
 review state.
 
-No browser screenshots or browser-based assistive-technology results are included in the repository. Stage 5 is complete for the scoped local demonstration on the strength of implementation, automated tests and the live local endpoint smoke check; the unperformed browser checks remain declared limitations.
+The manual browser audit on 24 September 2026 found three defects, all fixed and retested: an unreadable nested automatic-route label in dark mode, incomplete Narrator reading of the probability table, and insufficient dark-mode contrast on the Predict button (Lighthouse 96, then 100 after the fix). Results are recorded in the table above. No browser screenshots are included in the repository.
 
 ## Known limitations
 
 Gradio generates the outer document, component wrappers, queue status and other
-markup. The application supplies persistent labels, semantic result HTML,
-high-contrast states and live regions, but those choices do not establish that
-all framework-generated markup is accessible. Keyboard behavior, accessible
-names, reading order, live announcements, zoom and narrow-viewport behaviour
-remain untested. Stage 5 is closed under a documented scope exception, so these
-items must not be described as passed and this checklist must not be used to claim WCAG conformance.
+markup. The Gradio footer images are still reported as lacking suitable
+alternative text; the footer is retained because its Settings link is required
+to switch themes. Testing used one environment only: Windows, Microsoft Edge 153,
+Windows Narrator and Lighthouse, with the Narrator and Lighthouse versions not
+recorded. NVDA, JAWS, VoiceOver, mobile devices, speech input and users with
+access needs were not tested. This checklist must not be used to claim WCAG
+conformance.

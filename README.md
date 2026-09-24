@@ -14,8 +14,9 @@ The governed dataset, local baselines, DistilBERT fine-tune, calibration and
 one-time protected test evaluation are complete. The shared local inference
 module and Gradio interface apply the frozen calibration and review threshold;
 neutral predictions always require analyst review following the final-test risk
-finding. Stage 5 is complete for the scoped local demonstration. Browser-based
-accessibility and screenshot evidence was not produced and remains an explicit limitation. The full preparation run
+finding. Stage 5 is complete for the scoped local demonstration. A browser accessibility
+audit (keyboard, accessibility tree, Narrator, Lighthouse, 200% zoom and 320px
+viewport) passed after three fixes; screenshot evidence was not produced. The full preparation run
 reduced 5,326,143 source reviews to a frozen 48,000-row modelling dataset.
 DistilBERT achieved test macro-F1 0.6844 compared with 0.6017 for TF-IDF, while
 the local CPU evidence records the corresponding latency and size trade-off.

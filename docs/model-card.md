@@ -127,7 +127,7 @@ DistilBERT was approximately 13 times slower at the median and 42 times larger, 
 - The global 90% selective-accuracy target was illustrative and not stakeholder validated.
 - The revised mandatory-neutral UI policy lacks prospective validation.
 - Latency describes one WSL2 CPU environment and does not generalise to other hardware.
-- Browser, keyboard, screen-reader, accessibility-tree, axe/Lighthouse, zoom and narrow-viewport behaviour were not observed. The project does not claim WCAG conformance.
+- Accessibility was audited on 24 September 2026 in one environment only: Windows, Microsoft Edge 153, Windows Narrator and Lighthouse (tool versions not recorded). Keyboard, accessibility-tree, screen-reader, automated scan, 200% zoom and 320 CSS-pixel viewport checks passed after three fixes. NVDA, JAWS, VoiceOver, mobile devices and users with access needs were not tested, Gradio footer images lack suitable alternative text, and the project does not claim WCAG conformance.
 - Model weights are deliberately absent from the public repository, so an authorised private bundle is required for real inference.
 
 ## Privacy, governance and logging
